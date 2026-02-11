@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+}
+
+/* 하단 네비게이션을 위한 safe area 지원 */
+@supports (padding: max(0px)) {
+  .safe-area-inset-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* 터치 친화적 버튼 최소 크기 */
+button,
+a[role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* 모바일 터치 최적화 */
+@media (max-width: 768px) {
+  /* 터치 타겟 최소 크기 보장 */
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: 16px; /* iOS 줌 방지 */
+  }
+
+  /* 카드 호버 효과 제거 (모바일에서는 불필요) */
+  .card-hover {
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .card-hover:active {
+    transform: scale(0.98);
+  }
+}
+
+/* 스크롤바 스타일링 (선택적) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
