@@ -186,7 +186,7 @@ export default function StockSettingClient() {
 
             {/* 리스트 카드 영역 */}
             <div className="bg-white/80 dark:bg-gray-800 rounded-xl shadow-sm p-6 backdrop-blur-sm">
-                <h2 className="text-lg font-semibold mb-4 dark:text-white">종목 목록</h2>
+
                 {filteredStocks.length === 0 ? (
                     <div className="p-8 text-center text-gray-500 dark:text-gray-400">
                         데이터가 없습니다.
