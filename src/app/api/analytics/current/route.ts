@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server'
 import { readJsonFile } from '@/lib/jsonStorage'
-import { MetadataStore } from '@/types/metadata'
+import { StockStore } from '@/types/stock'
 import { SnapshotStore } from '@/types/snapshot'
 import { CurrentAssetStatus, AssetTypeSummary, AccountSummary, StockSummary } from '@/types/analytics'
 import { calculateReturnRate } from '@/lib/calculations'
 
-const METADATA_FILE = 'metadata.json'
+const STOCK_FILE = 'stock.json'
 const SNAPSHOT_FILE = 'snapshots.json'
 
 // GET: 현재 자산 현황 조회
 export async function GET() {
   try {
-    const [metadataStore, snapshotStore] = await Promise.all([
-      readJsonFile<MetadataStore>(METADATA_FILE),
+    const [stockStore, snapshotStore] = await Promise.all([
+      readJsonFile<StockStore>(STOCK_FILE),
       readJsonFile<SnapshotStore>(SNAPSHOT_FILE),
     ])
 
@@ -37,9 +37,9 @@ export async function GET() {
       (a, b) => b.date.localeCompare(a.date)
     )[0]
 
-    // 메타데이터 맵 생성
-    const metadataMap = new Map(
-      metadataStore.stocks.map((stock) => [stock.id, stock])
+    // 종목 맵 생성
+    const stockMap = new Map(
+      stockStore.stocks.map((stock) => [stock.id, stock])
     )
 
     // 총합 계산
@@ -54,18 +54,18 @@ export async function GET() {
     const accountMap = new Map<string, { purchase: number; value: number; gainLoss: number }>()
     
     // 종목별 집계
-    const stockMap = new Map<string, { purchase: number; value: number; gainLoss: number; quantity: number; metadata: any }>()
+    const stockSummaryMap = new Map<string, { purchase: number; value: number; gainLoss: number; quantity: number; stock: any }>()
 
     for (const item of latestSnapshot.items) {
-      const metadata = metadataMap.get(item.metadataId)
-      if (!metadata) continue
+      const stock = stockMap.get(item.stockId)
+      if (!stock) continue
 
       totalValue += item.valuationAmount
       totalPurchaseAmount += item.purchaseAmount
       totalGainLoss += item.gainLoss
 
       // 자산 종류별
-      const assetTypeKey = metadata.assetType
+      const assetTypeKey = stock.assetGroup
       const assetTypeData = assetTypeMap.get(assetTypeKey) || { purchase: 0, value: 0, gainLoss: 0 }
       assetTypeData.purchase += item.purchaseAmount
       assetTypeData.value += item.valuationAmount
@@ -73,7 +73,7 @@ export async function GET() {
       assetTypeMap.set(assetTypeKey, assetTypeData)
 
       // 계좌별
-      const accountKey = metadata.accountName
+      const accountKey = stock.accountType
       const accountData = accountMap.get(accountKey) || { purchase: 0, value: 0, gainLoss: 0 }
       accountData.purchase += item.purchaseAmount
       accountData.value += item.valuationAmount
@@ -81,18 +81,18 @@ export async function GET() {
       accountMap.set(accountKey, accountData)
 
       // 종목별
-      const stockData = stockMap.get(item.metadataId) || {
+      const stockSummaryData = stockSummaryMap.get(item.stockId) || {
         purchase: 0,
         value: 0,
         gainLoss: 0,
         quantity: 0,
-        metadata,
+        stock,
       }
-      stockData.purchase += item.purchaseAmount
-      stockData.value += item.valuationAmount
-      stockData.gainLoss += item.gainLoss
-      stockData.quantity += item.quantity
-      stockMap.set(item.metadataId, stockData)
+      stockSummaryData.purchase += item.purchaseAmount
+      stockSummaryData.value += item.valuationAmount
+      stockSummaryData.gainLoss += item.gainLoss
+      stockSummaryData.quantity += item.quantity
+      stockSummaryMap.set(item.stockId, stockSummaryData)
     }
 
     // 자산 종류별 요약
@@ -118,8 +118,8 @@ export async function GET() {
     )
 
     // 종목별 요약
-    const byStock: StockSummary[] = Array.from(stockMap.values()).map((data) => ({
-      metadata: data.metadata,
+    const byStock: StockSummary[] = Array.from(stockSummaryMap.values()).map((data) => ({
+      stock: data.stock,
       totalValue: data.value,
       totalPurchaseAmount: data.purchase,
       totalGainLoss: data.gainLoss,

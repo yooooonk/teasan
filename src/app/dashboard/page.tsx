@@ -94,7 +94,7 @@ export default function DashboardPage() {
     .sort((a, b) => b.totalValue - a.totalValue)
     .slice(0, 10)
     .map((item) => ({
-      name: item.metadata.name,
+      name: item.stock.stockName,
       매입금액: item.totalPurchaseAmount,
       평가손익: item.totalGainLoss,
     }))
@@ -263,9 +263,9 @@ export default function DashboardPage() {
                 {status.byStock
                   .sort((a, b) => b.totalValue - a.totalValue)
                   .map((item) => (
-                    <tr key={item.metadata.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <tr key={item.stock.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                        {item.metadata.name}
+                        {item.stock.stockName}
                       </td>
                       <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {formatNumber(item.totalPurchaseAmount)}

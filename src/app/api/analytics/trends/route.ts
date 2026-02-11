@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { readJsonFile } from '@/lib/jsonStorage'
-import { MetadataStore } from '@/types/metadata'
+import { StockStore } from '@/types/stock'
 import { SnapshotStore } from '@/types/snapshot'
 import { AssetTrend, TrendQuery } from '@/types/analytics'
 
-const METADATA_FILE = 'metadata.json'
+const STOCK_FILE = 'stock.json'
 const SNAPSHOT_FILE = 'snapshots.json'
 
 // GET: 자산 변화 추이 조회
@@ -14,18 +14,18 @@ export async function GET(req: NextRequest) {
     const query: TrendQuery = {
       startDate: searchParams.get('startDate') || undefined,
       endDate: searchParams.get('endDate') || undefined,
-      accountName: searchParams.get('accountName') || undefined,
+      accountType: searchParams.get('accountType') || undefined,
       stockId: searchParams.get('stockId') || undefined,
     }
 
-    const [metadataStore, snapshotStore] = await Promise.all([
-      readJsonFile<MetadataStore>(METADATA_FILE),
+    const [stockStore, snapshotStore] = await Promise.all([
+      readJsonFile<StockStore>(STOCK_FILE),
       readJsonFile<SnapshotStore>(SNAPSHOT_FILE),
     ])
 
-    // 메타데이터 맵 생성
-    const metadataMap = new Map(
-      metadataStore.stocks.map((stock) => [stock.id, stock])
+    // 종목 맵 생성
+    const stockMap = new Map(
+      stockStore.stocks.map((stock) => [stock.id, stock])
     )
 
     // 필터링된 스냅샷 가져오기
@@ -51,14 +51,14 @@ export async function GET(req: NextRequest) {
       const byStock: Record<string, number> = {}
 
       for (const item of snapshot.items) {
-        const metadata = metadataMap.get(item.metadataId)
-        if (!metadata) continue
+        const stock = stockMap.get(item.stockId)
+        if (!stock) continue
 
         // 필터링 적용
-        if (query.accountName && metadata.accountName !== query.accountName) {
+        if (query.accountType && stock.accountType !== query.accountType) {
           continue
         }
-        if (query.stockId && item.metadataId !== query.stockId) {
+        if (query.stockId && item.stockId !== query.stockId) {
           continue
         }
 
@@ -67,11 +67,11 @@ export async function GET(req: NextRequest) {
         totalGainLoss += item.gainLoss
 
         // 계좌별 집계
-        const accountKey = metadata.accountName
+        const accountKey = stock.accountType
         byAccount[accountKey] = (byAccount[accountKey] || 0) + item.valuationAmount
 
         // 종목별 집계
-        byStock[item.metadataId] = (byStock[item.metadataId] || 0) + item.valuationAmount
+        byStock[item.stockId] = (byStock[item.stockId] || 0) + item.valuationAmount
       }
 
       const trend: AssetTrend = {
@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
       }
 
       // 필터가 없을 때만 상세 집계 포함
-      if (!query.accountName && !query.stockId) {
+      if (!query.accountType && !query.stockId) {
         if (Object.keys(byAccount).length > 0) {
           trend.byAccount = byAccount
         }

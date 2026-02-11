@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { StockMetadata } from '@/types/metadata'
+import { Stock } from '@/types/stock'
 import { CreateSnapshotRequest } from '@/types/snapshot'
 import { calculateSnapshotItem, formatNumber, formatReturnRate } from '@/lib/calculations'
 import { format } from 'date-fns'
 
 interface SnapshotItemForm {
-  metadataId: string
+  stockId: string
   currentPrice: number
   averagePrice: number
   quantity: number
@@ -18,29 +18,29 @@ interface SnapshotItemForm {
 }
 
 export default function SnapshotPage() {
-  const [stocks, setStocks] = useState<StockMetadata[]>([])
+  const [stocks, setStocks] = useState<Stock[]>([])
   const [loading, setLoading] = useState(true)
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
   const [items, setItems] = useState<SnapshotItemForm[]>([])
   const [selectedStockId, setSelectedStockId] = useState('')
 
-  // 메타데이터 로드
-  const loadMetadata = async () => {
+  // 종목 로드
+  const loadStocks = async () => {
     try {
-      const res = await fetch('/api/metadata')
+      const res = await fetch('/api/stock')
       const data = await res.json()
       if (data.ok) {
         setStocks(data.data)
       }
     } catch (error) {
-      console.error('Error loading metadata:', error)
+      console.error('Error loading stocks:', error)
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    loadMetadata()
+    loadStocks()
   }, [])
 
   // 종목 추가
@@ -51,17 +51,17 @@ export default function SnapshotPage() {
     if (!stock) return
 
     // 이미 추가된 종목인지 확인
-    if (items.some((item) => item.metadataId === selectedStockId)) {
+    if (items.some((item) => item.stockId === selectedStockId)) {
       alert('이미 추가된 종목입니다.')
       return
     }
 
     const newItem: SnapshotItemForm = {
-      metadataId: selectedStockId,
+      stockId: selectedStockId,
       currentPrice: 0,
       averagePrice: 0,
       quantity: 0,
-      exchangeRate: stock.currency === 'KRW' ? 1 : 1,
+      exchangeRate: 1, // 기본값 1
     }
 
     setItems([...items, newItem])
@@ -123,7 +123,7 @@ export default function SnapshotPage() {
       const requestData: CreateSnapshotRequest = {
         date,
         items: items.map((item) => ({
-          metadataId: item.metadataId,
+          stockId: item.stockId,
           currentPrice: item.currentPrice,
           averagePrice: item.averagePrice,
           quantity: item.quantity,
@@ -183,10 +183,10 @@ export default function SnapshotPage() {
         >
           <option value="">종목 선택</option>
           {stocks
-            .filter((stock) => !items.some((item) => item.metadataId === stock.id))
+            .filter((stock) => !items.some((item) => item.stockId === stock.id))
             .map((stock) => (
               <option key={stock.id} value={stock.id}>
-                {stock.name} ({stock.code}) - {stock.accountName}
+                {stock.stockName} - {stock.accountType} ({stock.assetGroup})
               </option>
             ))}
         </select>
@@ -205,7 +205,7 @@ export default function SnapshotPage() {
           {/* 모바일 카드 뷰 */}
           <div className="md:hidden space-y-4">
             {items.map((item, index) => {
-              const stock = stocks.find((s) => s.id === item.metadataId)
+              const stock = stocks.find((s) => s.id === item.stockId)
               return (
                 <div
                   key={index}
@@ -214,9 +214,11 @@ export default function SnapshotPage() {
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        {stock?.name}
+                        {stock?.stockName}
                       </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{stock?.code}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {stock?.accountType} - {stock?.assetGroup}
+                      </p>
                     </div>
                     <button
                       onClick={() => handleRemoveItem(index)}
@@ -344,15 +346,15 @@ export default function SnapshotPage() {
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {items.map((item, index) => {
-                  const stock = stocks.find((s) => s.id === item.metadataId)
+                  const stock = stocks.find((s) => s.id === item.stockId)
                   return (
                     <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="px-4 py-3 text-sm">
                         <div className="font-medium text-gray-900 dark:text-white">
-                          {stock?.name}
+                          {stock?.stockName}
                         </div>
                         <div className="text-gray-500 dark:text-gray-400 text-xs">
-                          {stock?.code}
+                          {stock?.accountType} - {stock?.assetGroup}
                         </div>
                       </td>
                       <td className="px-4 py-3">

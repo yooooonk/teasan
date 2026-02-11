@@ -15,7 +15,7 @@ import {
   Area,
 } from 'recharts'
 import { AssetTrend } from '@/types/analytics'
-import { StockMetadata } from '@/types/metadata'
+import { Stock } from '@/types/stock'
 import { formatNumber } from '@/lib/calculations'
 import { format, subDays } from 'date-fns'
 
@@ -24,7 +24,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
 export default function TrendsPage() {
   const router = useRouter()
   const [trends, setTrends] = useState<AssetTrend[]>([])
-  const [stocks, setStocks] = useState<StockMetadata[]>([])
+  const [stocks, setStocks] = useState<Stock[]>([])
   const [loading, setLoading] = useState(true)
   const [startDate, setStartDate] = useState(format(subDays(new Date(), 30), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState(format(new Date(), 'yyyy-MM-dd'))
@@ -35,18 +35,18 @@ export default function TrendsPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [dateRange, setDateRange] = useState('Day')
 
-  // 메타데이터 로드
-  const loadMetadata = async () => {
+  // 종목 로드
+  const loadStocks = async () => {
     try {
-      const res = await fetch('/api/metadata')
+      const res = await fetch('/api/stock')
       const data = await res.json()
       if (data.ok) {
         setStocks(data.data)
-        const accounts = Array.from(new Set(data.data.map((s: StockMetadata) => s.accountName)))
+        const accounts = Array.from(new Set(data.data.map((s: Stock) => s.accountType)))
         setSelectedAccounts(accounts.slice(0, 3))
       }
     } catch (error) {
-      console.error('Error loading metadata:', error)
+      console.error('Error loading stocks:', error)
     }
   }
 
@@ -57,7 +57,7 @@ export default function TrendsPage() {
       const params = new URLSearchParams()
       if (startDate) params.append('startDate', startDate)
       if (endDate) params.append('endDate', endDate)
-      if (selectedAccount) params.append('accountName', selectedAccount)
+      if (selectedAccount) params.append('accountType', selectedAccount)
       if (selectedStockId) params.append('stockId', selectedStockId)
 
       const res = await fetch(`/api/analytics/trends?${params.toString()}`)
@@ -73,14 +73,14 @@ export default function TrendsPage() {
   }
 
   useEffect(() => {
-    loadMetadata()
+    loadStocks()
   }, [])
 
   useEffect(() => {
     loadTrends()
   }, [startDate, endDate, selectedAccount, selectedStockId])
 
-  const accounts = Array.from(new Set(stocks.map((s) => s.accountName)))
+  const accounts = Array.from(new Set(stocks.map((s) => s.accountType)))
 
   // 전체 자산 변화 추이 데이터
   const totalTrendData = trends.map((trend) => ({
@@ -115,7 +115,7 @@ export default function TrendsPage() {
       selectedStockIds.forEach((stockId) => {
         const stock = stocks.find((s) => s.id === stockId)
         if (stock) {
-          data[stock.name] = trend.byStock?.[stockId] || 0
+          data[stock.stockName] = trend.byStock?.[stockId] || 0
         }
       })
     }
@@ -194,7 +194,7 @@ export default function TrendsPage() {
   const selectedFilterName = selectedAccount
     ? accounts.find((a) => a === selectedAccount) || ''
     : selectedStockId
-    ? stocks.find((s) => s.id === selectedStockId)?.name || ''
+    ? stocks.find((s) => s.id === selectedStockId)?.stockName || ''
     : '전체'
 
   const latestTotal = trends.length > 0 ? trends[trends.length - 1].totalValue : 0
@@ -296,7 +296,7 @@ export default function TrendsPage() {
                 <option value="">전체</option>
                 {stocks.map((stock) => (
                   <option key={stock.id} value={stock.id}>
-                    {stock.name} ({stock.code})
+                    {stock.stockName} - {stock.accountType}
                   </option>
                 ))}
               </select>
@@ -415,7 +415,7 @@ export default function TrendsPage() {
               >
                 <div className="mb-2">
                   <div className="text-sm font-medium text-gray-900 dark:text-white mb-1">
-                    {item.stock.name}
+                    {item.stock.stockName}
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xl font-bold text-gray-900 dark:text-white">
@@ -450,15 +450,15 @@ export default function TrendsPage() {
       {(selectedAccount || selectedStockId || selectedAccounts.length > 0 || selectedStockIds.length > 0) &&
         trends.length > 0 && (
           <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-md mb-4">
-            <h2 className="text-lg font-semibold mb-4 dark:text-white">
-              {selectedAccount
-                ? `${selectedAccount} 자산 변화`
-                : selectedStockId
-                ? `${stocks.find((s) => s.id === selectedStockId)?.name} 자산 변화`
-                : selectedAccounts.length > 0
-                ? '계좌별 비교'
-                : '종목별 비교'}
-            </h2>
+          <h2 className="text-lg font-semibold mb-4 dark:text-white">
+            {selectedAccount
+              ? `${selectedAccount} 자산 변화`
+              : selectedStockId
+              ? `${stocks.find((s) => s.id === selectedStockId)?.stockName} 자산 변화`
+              : selectedAccounts.length > 0
+              ? '계좌별 비교'
+              : '종목별 비교'}
+          </h2>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart
                 data={
@@ -497,7 +497,7 @@ export default function TrendsPage() {
                       <Line
                         key={stockId}
                         type="monotone"
-                        dataKey={stock.name}
+                        dataKey={stock.stockName}
                         stroke={COLORS[index % COLORS.length]}
                         strokeWidth={2}
                       />

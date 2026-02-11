@@ -7,8 +7,8 @@ const navItems = [
     { href: '/', label: '홈', icon: '🏠' },
     { href: '/dashboard', label: '대시보드', icon: '📊' },
     { href: '/trends', label: '추이', icon: '📈' },
-    { href: '/metadata', label: '종목 관리', icon: '📋' },
     { href: '/snapshot', label: '스냅샷', icon: '➕' },
+    { href: '/stockSetting', label: '종목 관리', icon: '📋' },
 ]
 
 export default function BottomNavigation() {

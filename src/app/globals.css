@@ -18,7 +18,13 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
+  background: #FFFBF7; /* 파스텔 톤과 어울리는 따뜻한 크림 배경 */
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #1a1a1a; /* 다크모드에서는 어두운 배경 유지 */
+  }
 }
 
 /* 하단 네비게이션을 위한 safe area 지원 */

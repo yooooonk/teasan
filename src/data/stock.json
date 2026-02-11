@@ -1,0 +1,67 @@
+{
+  "stocks": [
+    {
+      "id": "stock_1",
+      "stockCode": "ETF 275280",
+      "assetGroup": "연금",
+      "accountType": "연금저축계좌",
+      "stockName": "KODEX 모멘텀",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2026-02-11T06:53:20.450Z"
+    },
+    {
+      "id": "stock_2",
+      "stockCode": "ETF 360750",
+      "assetGroup": "연금",
+      "accountType": "연금저축계좌",
+      "stockName": "TIGER미국S&P500",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "stock_3",
+      "stockCode": "ETF 275280",
+      "assetGroup": "연금",
+      "accountType": "퇴직연금IRP",
+      "stockName": "KODEX 모멘텀",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2026-02-11T06:53:29.044Z"
+    },
+    {
+      "id": "stock_4",
+      "stockCode": "KRX GOLD",
+      "assetGroup": "금",
+      "accountType": "금현물",
+      "stockName": "금",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "stock_5",
+      "stockCode": "NASDAQ AGNC",
+      "assetGroup": "해외주식",
+      "accountType": "일반",
+      "stockName": "AGNC",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "stock_6",
+      "stockCode": "KOSPI 005930",
+      "assetGroup": "국내주식",
+      "accountType": "ISA",
+      "stockName": "삼성전자",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "stock_7",
+      "stockCode": "ETF 102110",
+      "assetGroup": "국내주식",
+      "accountType": "ISA",
+      "stockName": "TIGER200",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}

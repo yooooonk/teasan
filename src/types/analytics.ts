@@ -1,4 +1,4 @@
-import { StockMetadata } from './metadata'
+import { Stock } from './stock'
 import { SnapshotItem } from './snapshot'
 
 /**
@@ -30,7 +30,7 @@ export interface AssetTypeSummary {
  * 계좌별 요약
  */
 export interface AccountSummary {
-  accountName: string
+  accountType: string
   totalValue: number
   totalPurchaseAmount: number
   totalGainLoss: number
@@ -41,7 +41,7 @@ export interface AccountSummary {
  * 종목별 요약
  */
 export interface StockSummary {
-  metadata: StockMetadata
+  stock: Stock
   totalValue: number
   totalPurchaseAmount: number
   totalGainLoss: number
@@ -67,7 +67,7 @@ export interface AssetTrend {
 export interface TrendQuery {
   startDate?: string
   endDate?: string
-  accountName?: string
+  accountType?: string
   stockId?: string
 }
 

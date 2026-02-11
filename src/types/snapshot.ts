@@ -2,7 +2,7 @@
  * 스냅샷 아이템
  */
 export interface SnapshotItem {
-  metadataId: string        // 메타데이터 참조
+  stockId: string          // 종목 참조
   currentPrice: number       // 현재가
   averagePrice: number       // 평균단가
   quantity: number           // 수량
