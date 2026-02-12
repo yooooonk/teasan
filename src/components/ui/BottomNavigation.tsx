@@ -4,8 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navItems = [
-    { href: '/', label: '홈', icon: '🏠' },
-    { href: '/dashboard', label: '대시보드', icon: '📊' },
+    { href: '/', label: '대시보드', icon: '📊' },
     { href: '/trends', label: '추이', icon: '📈' },
     { href: '/snapshot', label: '스냅샷', icon: '➕' },
     { href: '/stockSetting', label: '종목 관리', icon: '📋' },

@@ -2,18 +2,26 @@ import { NextResponse } from 'next/server'
 import { readJsonFile } from '@/lib/jsonStorage'
 import { StockStore } from '@/types/stock'
 import { SnapshotStore } from '@/types/snapshot'
+import { TargetStore } from '@/types/target'
 import { CurrentAssetStatus, AssetTypeSummary, AccountSummary, StockSummary } from '@/types/analytics'
 import { calculateReturnRate } from '@/lib/calculations'
 
 const STOCK_FILE = 'stock.json'
 const SNAPSHOT_FILE = 'snapshots.json'
+const TARGET_FILE = 'targets.json'
 
 // GET: 현재 자산 현황 조회
 export async function GET() {
   try {
-    const [stockStore, snapshotStore] = await Promise.all([
+    const [stockStore, snapshotStore, targetStore] = await Promise.all([
       readJsonFile<StockStore>(STOCK_FILE),
       readJsonFile<SnapshotStore>(SNAPSHOT_FILE),
+      readJsonFile<TargetStore>(TARGET_FILE).catch(() => ({
+        연금: 0,
+        금: 0,
+        해외주식: 0,
+        국내주식: 0,
+      })),
     ])
 
     // 최신 스냅샷 찾기
@@ -103,6 +111,7 @@ export async function GET() {
         totalPurchaseAmount: data.purchase,
         totalGainLoss: data.gainLoss,
         returnRate: calculateReturnRate(data.gainLoss, data.purchase),
+        targetAmount: targetStore[assetType as keyof TargetStore] || 0,
       })
     )
 

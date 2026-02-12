@@ -99,3 +99,23 @@ export function formatReturnRate(rate: number, decimals: number = 2): string {
   return `${sign}${rate.toFixed(decimals)}%`
 }
 
+/**
+ * 만원 단위 포맷팅
+ */
+export function formatNumberInManwon(value: number, decimals: number = 0): string {
+  const manwon = value / 10000
+  return formatNumber(manwon, decimals)
+}
+
+/**
+ * 천만원 단위 포맷팅 (차트용)
+ */
+export function formatNumberInCheonManwon(value: number): string {
+  const cheonManwon = value / 10000000
+  if (cheonManwon >= 1) {
+    return `${formatNumber(cheonManwon, 1)}천만원`
+  }
+  const manwon = value / 10000
+  return `${formatNumber(manwon, 0)}만원`
+}
+
