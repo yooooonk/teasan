@@ -7,9 +7,11 @@ import {
   UpdateSnapshotRequest,
   SnapshotQuery,
 } from '@/types/snapshot'
-import { calculateSnapshotItem } from '@/lib/calculations'
+import { StockStore } from '@/types/stock'
+import { calculateSnapshotItem, calculateValuationAmount, calculateGainLoss } from '@/lib/calculations'
 
 const SNAPSHOT_FILE = 'snapshots.json'
+const STOCK_FILE = 'stock.json'
 
 // GET: 스냅샷 조회 (날짜별 필터링)
 export async function GET(req: NextRequest) {
@@ -71,18 +73,42 @@ export async function POST(req: NextRequest) {
     const id = `snapshot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     const now = new Date().toISOString()
     
+    // Stock 정보 가져오기
+    const stockStore = await readJsonFile<StockStore>(STOCK_FILE)
+    const stockMap = new Map(stockStore.stocks.map((stock) => [stock.id, stock]))
+    
     // 아이템 계산 (매입금액, 평가금액, 평가손익)
     const items = body.items.map((item) => {
-      const calculated = calculateSnapshotItem(
-        item.currentPrice,
-        item.averagePrice,
-        item.quantity,
-        item.exchangeRate
-      )
+      const stock = stockMap.get(item.stockId)
+      const isGold = stock?.assetGroup === '금'
       
-      return {
-        ...item,
-        ...calculated,
+      if (isGold) {
+        // 금인 경우: 매입금액은 클라이언트에서 직접 입력받음 (averagePrice에 저장되어 있음)
+        // 하지만 현재 구조상 averagePrice가 0으로 오므로, 별도로 처리 필요
+        // 임시로 averagePrice를 매입금액으로 사용 (클라이언트에서 이미 처리)
+        const purchaseAmount = item.averagePrice || 0 // 클라이언트에서 매입금액을 averagePrice에 넣어서 보냄
+        const valuationAmount = calculateValuationAmount(item.currentPrice, item.quantity, item.exchangeRate)
+        const gainLoss = calculateGainLoss(valuationAmount, purchaseAmount)
+        
+        return {
+          ...item,
+          purchaseAmount,
+          valuationAmount,
+          gainLoss,
+        }
+      } else {
+        // 금이 아닌 경우: 기존 계산 로직
+        const calculated = calculateSnapshotItem(
+          item.currentPrice,
+          item.averagePrice,
+          item.quantity,
+          item.exchangeRate
+        )
+        
+        return {
+          ...item,
+          ...calculated,
+        }
       }
     })
     
@@ -138,17 +164,39 @@ export async function PUT(req: NextRequest) {
     // 아이템이 있으면 재계산
     let items = store.snapshots[index].items
     if (body.items) {
+      // Stock 정보 가져오기
+      const stockStore = await readJsonFile<StockStore>(STOCK_FILE)
+      const stockMap = new Map(stockStore.stocks.map((stock) => [stock.id, stock]))
+      
       items = body.items.map((item) => {
-        const calculated = calculateSnapshotItem(
-          item.currentPrice,
-          item.averagePrice,
-          item.quantity,
-          item.exchangeRate
-        )
+        const stock = stockMap.get(item.stockId)
+        const isGold = stock?.assetGroup === '금'
         
-        return {
-          ...item,
-          ...calculated,
+        if (isGold) {
+          // 금인 경우
+          const purchaseAmount = item.averagePrice || 0
+          const valuationAmount = calculateValuationAmount(item.currentPrice, item.quantity, item.exchangeRate)
+          const gainLoss = calculateGainLoss(valuationAmount, purchaseAmount)
+          
+          return {
+            ...item,
+            purchaseAmount,
+            valuationAmount,
+            gainLoss,
+          }
+        } else {
+          // 금이 아닌 경우
+          const calculated = calculateSnapshotItem(
+            item.currentPrice,
+            item.averagePrice,
+            item.quantity,
+            item.exchangeRate
+          )
+          
+          return {
+            ...item,
+            ...calculated,
+          }
         }
       })
     }
