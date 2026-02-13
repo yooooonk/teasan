@@ -76,6 +76,160 @@
         }
       ],
       "createdAt": "2026-02-12T05:25:50.006Z"
+    },
+    {
+      "id": "snapshot_20260202_manual",
+      "date": "2026-02-02",
+      "items": [
+        {
+          "stockId": "stock_1",
+          "currentPrice": 31005,
+          "averagePrice": 28696.53,
+          "quantity": 121,
+          "exchangeRate": 1,
+          "purchaseAmount": 3472280,
+          "valuationAmount": 3751605,
+          "gainLoss": 279325
+        },
+        {
+          "stockId": "stock_2",
+          "currentPrice": 25080,
+          "averagePrice": 13202.95,
+          "quantity": 41,
+          "exchangeRate": 1,
+          "purchaseAmount": 541321,
+          "valuationAmount": 1028280,
+          "gainLoss": 486959
+        },
+        {
+          "stockId": "stock_3",
+          "currentPrice": 31005,
+          "averagePrice": 20200.19,
+          "quantity": 81,
+          "exchangeRate": 1,
+          "purchaseAmount": 1636215,
+          "valuationAmount": 2511405,
+          "gainLoss": 875190
+        },
+        {
+          "stockId": "stock_4",
+          "currentPrice": 236090,
+          "averagePrice": 0,
+          "quantity": 25,
+          "exchangeRate": 1,
+          "purchaseAmount": 4831630,
+          "valuationAmount": 5902250,
+          "gainLoss": 1070620
+        },
+        {
+          "stockId": "stock_5",
+          "currentPrice": 11.52,
+          "averagePrice": 15212.5,
+          "quantity": 1102,
+          "exchangeRate": 1464,
+          "purchaseAmount": 16764779.54,
+          "valuationAmount": 18586808,
+          "gainLoss": 1822028.46
+        },
+        {
+          "stockId": "stock_6",
+          "currentPrice": 159300,
+          "averagePrice": 141259.15,
+          "quantity": 164,
+          "exchangeRate": 1,
+          "purchaseAmount": 23166500,
+          "valuationAmount": 26125200,
+          "gainLoss": 2958700
+        },
+        {
+          "stockId": "stock_7",
+          "currentPrice": 75975,
+          "averagePrice": 63662.68,
+          "quantity": 34,
+          "exchangeRate": 1,
+          "purchaseAmount": 2163531,
+          "valuationAmount": 2583150,
+          "gainLoss": 419619
+        }
+      ],
+      "createdAt": "2026-02-02T00:00:00.000Z"
+    },
+    {
+      "id": "snapshot_1770941558926_8f9yn3w0l",
+      "date": "2026-02-13",
+      "items": [
+        {
+          "stockId": "stock_1",
+          "currentPrice": 31795,
+          "averagePrice": 28680,
+          "quantity": 121,
+          "exchangeRate": 1,
+          "purchaseAmount": 3470280,
+          "valuationAmount": 3847195,
+          "gainLoss": 376915
+        },
+        {
+          "stockId": "stock_2",
+          "currentPrice": 24450,
+          "averagePrice": 13203,
+          "quantity": 41,
+          "exchangeRate": 1,
+          "purchaseAmount": 541323,
+          "valuationAmount": 1003473.77,
+          "gainLoss": 462150.77
+        },
+        {
+          "stockId": "stock_3",
+          "currentPrice": 31795,
+          "averagePrice": 20200,
+          "quantity": 81,
+          "exchangeRate": 1,
+          "purchaseAmount": 1636200,
+          "valuationAmount": 2575397.4299999997,
+          "gainLoss": 939197.4299999997
+        },
+        {
+          "stockId": "stock_4",
+          "currentPrice": 230000,
+          "averagePrice": 4831630,
+          "quantity": 25,
+          "exchangeRate": 1,
+          "purchaseAmount": 4831630,
+          "valuationAmount": 5750000,
+          "gainLoss": 918370
+        },
+        {
+          "stockId": "stock_5",
+          "currentPrice": 11.38,
+          "averagePrice": 10.3907,
+          "quantity": 1102,
+          "exchangeRate": 1442.97,
+          "purchaseAmount": 16522802.153658,
+          "valuationAmount": 18095940.457200002,
+          "gainLoss": 1573138.3035420012
+        },
+        {
+          "stockId": "stock_6",
+          "currentPrice": 183700,
+          "averagePrice": 141259,
+          "quantity": 164,
+          "exchangeRate": 1,
+          "purchaseAmount": 23166476,
+          "valuationAmount": 30126800,
+          "gainLoss": 6960324
+        },
+        {
+          "stockId": "stock_7",
+          "currentPrice": 82605,
+          "averagePrice": 63633,
+          "quantity": 34,
+          "exchangeRate": 1,
+          "purchaseAmount": 2163522,
+          "valuationAmount": 2808570,
+          "gainLoss": 645048
+        }
+      ],
+      "createdAt": "2026-02-13T00:12:38.926Z"
     }
   ]
 }

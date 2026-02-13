@@ -1,0 +1,431 @@
+'use client'
+
+import {
+  calculateReturnRate,
+  formatNumber,
+  formatReturnRate,
+} from '@/lib/calculations'
+import type { Snapshot, SnapshotItem } from '@/types/snapshot'
+import type { Stock } from '@/types/stock'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
+
+const MAIN_COLOR = '#F7A8B7'
+const MAIN_COLOR_LIGHT = '#fbc4cd'
+const GRADIENT_TOP = '#e88a9a'
+const GRADIENT_BOTTOM = '#fde0e6'
+
+type Props = {
+  stockId: string
+}
+
+/** 최근 스냅샷 3개 중 해당 종목만 추출한 항목 (상세 테이블·카드용) */
+export type SnapshotWithItem = {
+  snapshot: Snapshot
+  item: SnapshotItem
+}
+
+export default function StockDetailClient({ stockId }: Props) {
+  const router = useRouter()
+  const [stock, setStock] = useState<Stock | null>(null)
+  const [recentSnapshotsWithItem, setRecentSnapshotsWithItem] = useState<
+    SnapshotWithItem[]
+  >([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function load() {
+      setLoading(true)
+      setError(null)
+      try {
+        const [stockRes, snapshotsRes] = await Promise.all([
+          fetch('/api/stock'),
+          fetch('/api/snapshots'),
+        ])
+
+        const stockJson = await stockRes.json()
+        const snapshotsJson = await snapshotsRes.json()
+
+        if (cancelled) return
+
+        if (!stockJson.ok || !stockJson.data) {
+          setError(stockJson.error ?? '종목 정보를 불러올 수 없습니다.')
+          return
+        }
+        const stocks = stockJson.data as Stock[]
+        const found = stocks.find((s) => s.id === stockId) ?? null
+        setStock(found)
+
+        if (!found) {
+          setRecentSnapshotsWithItem([])
+          return
+        }
+
+        if (!snapshotsJson.ok || !snapshotsJson.data) {
+          setError(snapshotsJson.error ?? '스냅샷을 불러올 수 없습니다.')
+          return
+        }
+        const snapshots = snapshotsJson.data as Snapshot[]
+        const first = snapshots[snapshots.length - 1]
+        const recent9 = snapshots.slice(0, 9)
+        const combined = first
+          ? [first, ...recent9.filter((s) => s.id !== first.id)].slice(0, 10)
+          : recent9.slice(0, 10)
+        const withItems: SnapshotWithItem[] = combined
+          .map((snapshot) => {
+            const item = snapshot.items.find((i) => i.stockId === stockId)
+            return item ? { snapshot, item } : null
+          })
+          .filter((x): x is SnapshotWithItem => x !== null)
+        setRecentSnapshotsWithItem(withItems)
+      } catch (e) {
+        if (!cancelled) {
+          setError(
+            e instanceof Error ? e.message : '데이터를 불러오는 중 오류가 발생했습니다.'
+          )
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [stockId])
+
+  return (
+    <div
+      className="min-h-screen"
+      style={{
+        background: `linear-gradient(180deg, ${GRADIENT_TOP} 0%, ${GRADIENT_TOP} 15%, ${MAIN_COLOR} 45%, ${MAIN_COLOR_LIGHT} 70%, ${GRADIENT_BOTTOM} 100%)`,
+      }}
+    >
+      <header className="sticky top-0 z-0 pt-4 pb-6 px-5 sm:px-6">
+        <button
+          onClick={() => router.back()}
+          className="p-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors"
+          type="button"
+        >
+          ←
+        </button>
+        {stock && (
+          <div className="py-5 px-5 sm:px-6 text-center -mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+              {stock.stockName}
+            </h1>
+          </div>
+        )}
+      </header>
+
+      <main className="relative z-10 rounded-t-3xl mt-6 bg-white dark:bg-gray-800 min-h-[80vh] px-6 sm:px-8 pt-8 pb-8 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)] overflow-hidden">
+        {loading && (
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+            로딩 중…
+          </div>
+        )}
+        {error && (
+          <div className="py-6 text-red-600 dark:text-red-400">{error}</div>
+        )}
+        {!loading && !error && stock && (
+          <>
+            {recentSnapshotsWithItem.length > 0 && (() => {
+              const byDateDesc = [...recentSnapshotsWithItem].sort((a, b) =>
+                b.snapshot.date.localeCompare(a.snapshot.date)
+              )
+              const latest = byDateDesc[0].item
+              const returnRate = calculateReturnRate(
+                latest.gainLoss,
+                latest.purchaseAmount
+              )
+              return (
+                <>
+                  <div className="space-y-3 sm:space-y-4 mb-6">
+                    <div className="bg-gray-50 dark:bg-gray-700/50 p-4 sm:p-5 rounded-2xl border border-gray-100 dark:border-gray-600">
+                      <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">
+                        평가금액
+                      </div>
+                      <div className="text-center text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
+                        {formatNumber(latest.valuationAmount)} 원
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                      <div className="bg-gray-50 dark:bg-gray-700/50 p-4 sm:p-5 rounded-2xl border border-gray-100 dark:border-gray-600">
+                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">
+                          평가손익
+                        </div>
+                        <div
+                          className={`text-center text-lg sm:text-2xl font-bold ${latest.gainLoss >= 0
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-red-600 dark:text-red-400'
+                            }`}
+                        >
+                          {latest.gainLoss >= 0 ? '+' : ''}
+                          {formatNumber(latest.gainLoss)} 원
+                        </div>
+                      </div>
+                      <div className="bg-gray-50 dark:bg-gray-700/50 p-4 sm:p-5 rounded-2xl border border-gray-100 dark:border-gray-600">
+                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">
+                          수익률
+                        </div>
+                        <div
+                          className={`text-center text-lg sm:text-2xl font-bold ${returnRate >= 0
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-red-600 dark:text-red-400'
+                            }`}
+                        >
+                          {formatReturnRate(returnRate)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {recentSnapshotsWithItem.length >= 2 && (() => {
+                    const shortDate = (s: string) => {
+                      const [, m, d] = s.split('-')
+                      return `${Number(m)}/${Number(d)}`
+                    }
+                    const byDateAsc = [...recentSnapshotsWithItem].sort((a, b) =>
+                      a.snapshot.date.localeCompare(b.snapshot.date)
+                    )
+                    const TEN_MILLION = 10_000_000
+                    const chartData = byDateAsc.map(({ snapshot, item }) => ({
+                      date: shortDate(snapshot.date),
+                      fullDate: snapshot.date,
+                      value: item.valuationAmount / TEN_MILLION,
+                      actualValue: item.valuationAmount,
+                    }))
+                    const max천만 = Math.max(...chartData.map((d) => d.value), 1)
+                    const yMax = Math.ceil(max천만 * 1.2) || 10
+                    const deltas: { from: string; to: string; amount: number; pct: number }[] = []
+                    for (let i = 0; i < byDateAsc.length - 1; i++) {
+                      const prev = byDateAsc[i].item
+                      const next = byDateAsc[i + 1].item
+                      const amount = next.valuationAmount - prev.valuationAmount
+                      const pct = prev.valuationAmount !== 0
+                        ? (amount / prev.valuationAmount) * 100
+                        : 0
+                      deltas.push({
+                        from: byDateAsc[i].snapshot.date,
+                        to: byDateAsc[i + 1].snapshot.date,
+                        amount,
+                        pct,
+                      })
+                    }
+                    const deltasToShow = deltas.slice(-2)
+                    return (
+                      <div className="mb-6">
+                        <div className="rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 p-4 sm:p-6 mb-4">
+                          <h2 className="text-base font-semibold mb-4" style={{ color: MAIN_COLOR }}>
+                            평가금액 추이
+                          </h2>
+                          <ResponsiveContainer width="100%" height={240}>
+                            <AreaChart
+                              data={chartData}
+                              margin={{ top: 8, right: 8, left: -8, bottom: 8 }}
+                            >
+                              <defs>
+                                <linearGradient
+                                  id="colorStockTrend"
+                                  x1="0"
+                                  y1="0"
+                                  x2="0"
+                                  y2="1"
+                                >
+                                  <stop offset="5%" stopColor={MAIN_COLOR} stopOpacity={0.8} />
+                                  <stop offset="95%" stopColor={MAIN_COLOR} stopOpacity={0} />
+                                </linearGradient>
+                              </defs>
+                              <CartesianGrid
+                                strokeDasharray="3 3"
+                                className="stroke-gray-200 dark:stroke-gray-600"
+                              />
+                              <XAxis
+                                dataKey="date"
+                                tick={{ fontSize: 12 }}
+                                height={28}
+                                className="text-gray-500 dark:text-gray-400"
+                              />
+                              <YAxis
+                                width={52}
+                                tick={{ fontSize: 11 }}
+                                tickFormatter={(v) => `${v}천만`}
+                                domain={[0, yMax]}
+                                allowDecimals={false}
+                                className="text-gray-500 dark:text-gray-400"
+                              />
+                              <Tooltip
+                                formatter={(_: number, __: string, props: { payload?: { actualValue?: number } }) =>
+                                  [formatNumber(props?.payload?.actualValue ?? 0), '평가금액']
+                                }
+                                contentStyle={{ fontSize: 12 }}
+                                labelFormatter={(_, payload) =>
+                                  payload?.[0]?.payload?.fullDate ?? ''
+                                }
+                              />
+                              <Area
+                                type="monotone"
+                                dataKey="value"
+                                stroke={MAIN_COLOR}
+                                fill="url(#colorStockTrend)"
+                                fillOpacity={1}
+                                strokeWidth={2}
+                              />
+                            </AreaChart>
+                          </ResponsiveContainer>
+                        </div>
+                        <h2 className="text-base font-semibold mb-3" style={{ color: MAIN_COLOR }}>
+                          전일 대비 평가 손익차
+                        </h2>
+                        <div className="flex gap-4">
+                          {deltasToShow.map((d) => {
+                            const isUp = d.amount >= 0
+                            return (
+                              <div
+                                key={`${d.from}-${d.to}`}
+                                className="flex-1 min-w-0 rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 p-4"
+                              >
+                                <div className="text-sm font-medium mb-1" style={{ color: MAIN_COLOR }}>
+                                  {shortDate(d.from)} → {shortDate(d.to)} 구간
+                                </div>
+                                <div
+                                  className={`text-xl sm:text-2xl font-bold tabular-nums ${isUp
+                                    ? 'text-emerald-600 dark:text-emerald-400'
+                                    : 'text-rose-600 dark:text-rose-400'
+                                    }`}
+                                >
+                                  {isUp ? '+ ' : ' '}
+                                  {formatNumber(d.amount)} 원
+                                </div>
+                                <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                                  전일 대비 {d.pct >= 0 ? '+ ' : ''}
+                                  {d.pct.toFixed(2)}%
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })()}
+                  <div className="rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 overflow-hidden">
+                    <h2 className="p-4 text-base sm:text-lg font-semibold" style={{ color: MAIN_COLOR }}>
+                      최근 스냅샷
+                    </h2>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-700">
+                          <tr>
+                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                              기준일
+                            </th>
+                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                              평가금액
+                            </th>
+                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                              평가손익
+                            </th>
+                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                              수익률
+                            </th>
+                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                              매입금액
+                            </th>
+                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                              수량
+                            </th>
+                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                              현재가
+                            </th>
+                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                              평균단가
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                          {[...recentSnapshotsWithItem]
+                            .sort((a, b) => b.snapshot.date.localeCompare(a.snapshot.date))
+                            .map(({ snapshot, item }) => {
+                              const rowReturnRate = calculateReturnRate(
+                                item.gainLoss,
+                                item.purchaseAmount
+                              )
+                              return (
+                                <tr
+                                  key={snapshot.id}
+                                  className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                                >
+                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                    {snapshot.date}
+                                  </td>
+                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
+                                    {formatNumber(item.valuationAmount)}
+                                  </td>
+                                  <td
+                                    className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-right ${item.gainLoss >= 0
+                                      ? 'text-green-600 dark:text-green-400'
+                                      : 'text-red-600 dark:text-red-400'
+                                      }`}
+                                  >
+                                    {item.gainLoss >= 0 ? '+' : ''}
+                                    {formatNumber(item.gainLoss)}
+                                  </td>
+                                  <td
+                                    className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-right ${rowReturnRate >= 0
+                                      ? 'text-green-600 dark:text-green-400'
+                                      : 'text-red-600 dark:text-red-400'
+                                      }`}
+                                  >
+                                    {formatReturnRate(rowReturnRate)}
+                                  </td>
+                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
+                                    {formatNumber(item.purchaseAmount)}
+                                  </td>
+                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
+                                    {formatNumber(item.quantity)}
+                                  </td>
+                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
+                                    {formatNumber(
+                                      item.currentPrice,
+                                      item.exchangeRate !== 1 ? 2 : 0
+                                    )}
+                                  </td>
+                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
+                                    {formatNumber(
+                                      item.averagePrice,
+                                      item.exchangeRate !== 1 ? 2 : 0
+                                    )}
+                                  </td>
+                                </tr>
+                              )
+                            })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
+              )
+            })()}
+            {recentSnapshotsWithItem.length === 0 && (
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                해당 종목의 스냅샷 데이터가 없습니다.
+              </div>
+            )}
+          </>
+        )}
+      </main>
+    </div>
+  )
+}

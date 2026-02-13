@@ -89,21 +89,19 @@ export default function StockTable({ stocks }: StockTableProps) {
                   {formatNumber(item.totalValue)}
                 </td>
                 <td
-                  className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium ${
-                    item.totalGainLoss >= 0
+                  className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium ${item.totalGainLoss >= 0
                       ? 'text-green-600 dark:text-green-400'
                       : 'text-red-600 dark:text-red-400'
-                  }`}
+                    }`}
                 >
                   {item.totalGainLoss >= 0 ? '+' : ''}
                   {formatNumber(item.totalGainLoss)}
                 </td>
                 <td
-                  className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium ${
-                    item.returnRate >= 0
+                  className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium ${item.returnRate >= 0
                       ? 'text-green-600 dark:text-green-400'
                       : 'text-red-600 dark:text-red-400'
-                  }`}
+                    }`}
                 >
                   {formatReturnRate(item.returnRate)}
                 </td>

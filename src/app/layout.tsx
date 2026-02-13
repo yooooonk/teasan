@@ -1,4 +1,5 @@
 import BottomNavigation from '@/components/ui/BottomNavigation'
+import ContentArea from '@/components/ui/ContentArea'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -19,9 +20,7 @@ export default function RootLayout({
     <html lang="ko">
       <body className={inter.className}>
         <main className="min-h-screen pb-24">
-          <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-            {children}
-          </div>
+          <ContentArea>{children}</ContentArea>
         </main>
         <BottomNavigation />
       </body>
