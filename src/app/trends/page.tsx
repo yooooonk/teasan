@@ -6,6 +6,7 @@ import { Stock } from '@/types/stock'
 import { format, subDays } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { StockTrendCard } from '@/components/trends'
 import {
   Area,
   AreaChart,
@@ -483,47 +484,16 @@ export default function TrendsPage() {
             {stockLatestData.slice(0, 5).map((item, index) => {
               const { chart, bg } = STOCK_CARD_COLORS[index % STOCK_CARD_COLORS.length]
               return (
-                <button
-                  type="button"
+                <StockTrendCard
                   key={item.stock.id}
+                  stock={item.stock}
+                  value={item.value}
+                  isPositive={item.isPositive}
+                  miniChartData={item.miniChartData}
+                  chartColor={chart}
+                  bgColor={bg}
                   onClick={() => router.push(`/trends/stock/${item.stock.id}`)}
-                  className="flex-shrink-0 w-48 rounded-xl shadow-sm p-4 text-left hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
-                  style={{ backgroundColor: bg }}
-                >
-                  <div className="mb-2">
-                    <div className="text-sm font-medium text-gray-900 mb-1">
-                      {item.stock.stockName}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl font-bold text-gray-900">
-                        {formatNumber(item.value)}
-                      </span>
-                      <span className={`text-xs ${item.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                        {item.isPositive ? '▲' : '▼'}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="h-12">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={item.miniChartData}>
-                        <Tooltip
-                          formatter={(value: number, _name: string, props: { payload?: { actualValue?: number } }) =>
-                            [formatNumber(props?.payload?.actualValue ?? 0), '평가금액']
-                          }
-                          contentStyle={{ fontSize: 12 }}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="value"
-                          stroke={chart}
-                          fill={chart}
-                          fillOpacity={0.4}
-                          strokeWidth={1.5}
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </button>
+                />
               )
             })}
           </div>

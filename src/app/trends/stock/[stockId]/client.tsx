@@ -1,11 +1,12 @@
 'use client'
 
 import {
-  calculateReturnRate,
-  formatNumber,
-  formatReturnRate,
-} from '@/lib/calculations'
-import type { Snapshot, SnapshotItem } from '@/types/snapshot'
+  StockDetailCards,
+  StockSnapshotTable,
+  type SnapshotWithItem,
+} from '@/components/trends'
+import { formatNumber } from '@/lib/calculations'
+import type { Snapshot } from '@/types/snapshot'
 import type { Stock } from '@/types/stock'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -26,12 +27,6 @@ const GRADIENT_BOTTOM = '#fde0e6'
 
 type Props = {
   stockId: string
-}
-
-/** 최근 스냅샷 3개 중 해당 종목만 추출한 항목 (상세 테이블·카드용) */
-export type SnapshotWithItem = {
-  snapshot: Snapshot
-  item: SnapshotItem
 }
 
 export default function StockDetailClient({ stockId }: Props) {
@@ -147,51 +142,9 @@ export default function StockDetailClient({ stockId }: Props) {
                 b.snapshot.date.localeCompare(a.snapshot.date)
               )
               const latest = byDateDesc[0].item
-              const returnRate = calculateReturnRate(
-                latest.gainLoss,
-                latest.purchaseAmount
-              )
               return (
                 <>
-                  <div className="space-y-3 sm:space-y-4 mb-6">
-                    <div className="bg-gray-50 dark:bg-gray-700/50 p-4 sm:p-5 rounded-2xl border border-gray-100 dark:border-gray-600">
-                      <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">
-                        평가금액
-                      </div>
-                      <div className="text-center text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
-                        {formatNumber(latest.valuationAmount)} 원
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                      <div className="bg-gray-50 dark:bg-gray-700/50 p-4 sm:p-5 rounded-2xl border border-gray-100 dark:border-gray-600">
-                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">
-                          평가손익
-                        </div>
-                        <div
-                          className={`text-center text-lg sm:text-2xl font-bold ${latest.gainLoss >= 0
-                            ? 'text-green-600 dark:text-green-400'
-                            : 'text-red-600 dark:text-red-400'
-                            }`}
-                        >
-                          {latest.gainLoss >= 0 ? '+' : ''}
-                          {formatNumber(latest.gainLoss)} 원
-                        </div>
-                      </div>
-                      <div className="bg-gray-50 dark:bg-gray-700/50 p-4 sm:p-5 rounded-2xl border border-gray-100 dark:border-gray-600">
-                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">
-                          수익률
-                        </div>
-                        <div
-                          className={`text-center text-lg sm:text-2xl font-bold ${returnRate >= 0
-                            ? 'text-green-600 dark:text-green-400'
-                            : 'text-red-600 dark:text-red-400'
-                            }`}
-                        >
-                          {formatReturnRate(returnRate)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <StockDetailCards item={latest} />
                   {recentSnapshotsWithItem.length >= 2 && (() => {
                     const shortDate = (s: string) => {
                       const [, m, d] = s.split('-')
@@ -267,8 +220,12 @@ export default function StockDetailClient({ stockId }: Props) {
                                 className="text-gray-500 dark:text-gray-400"
                               />
                               <Tooltip
-                                formatter={(_: number, __: string, props: { payload?: { actualValue?: number } }) =>
-                                  [formatNumber(props?.payload?.actualValue ?? 0), '평가금액']
+                                formatter={(
+                                  _value: number | undefined,
+                                  _name: string | undefined,
+                                  item: { payload?: { actualValue?: number } }
+                                ) =>
+                                  [formatNumber(item?.payload?.actualValue ?? 0), '평가금액']
                                 }
                                 contentStyle={{ fontSize: 12 }}
                                 labelFormatter={(_, payload) =>
@@ -320,101 +277,10 @@ export default function StockDetailClient({ stockId }: Props) {
                       </div>
                     )
                   })()}
-                  <div className="rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 overflow-hidden">
-                    <h2 className="p-4 text-base sm:text-lg font-semibold" style={{ color: MAIN_COLOR }}>
-                      최근 스냅샷
-                    </h2>
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead className="bg-gray-50 dark:bg-gray-700">
-                          <tr>
-                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                              기준일
-                            </th>
-                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                              평가금액
-                            </th>
-                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                              평가손익
-                            </th>
-                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                              수익률
-                            </th>
-                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                              매입금액
-                            </th>
-                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                              수량
-                            </th>
-                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                              현재가
-                            </th>
-                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                              평균단가
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                          {[...recentSnapshotsWithItem]
-                            .sort((a, b) => b.snapshot.date.localeCompare(a.snapshot.date))
-                            .map(({ snapshot, item }) => {
-                              const rowReturnRate = calculateReturnRate(
-                                item.gainLoss,
-                                item.purchaseAmount
-                              )
-                              return (
-                                <tr
-                                  key={snapshot.id}
-                                  className="hover:bg-gray-50 dark:hover:bg-gray-700"
-                                >
-                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                    {snapshot.date}
-                                  </td>
-                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
-                                    {formatNumber(item.valuationAmount)}
-                                  </td>
-                                  <td
-                                    className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-right ${item.gainLoss >= 0
-                                      ? 'text-green-600 dark:text-green-400'
-                                      : 'text-red-600 dark:text-red-400'
-                                      }`}
-                                  >
-                                    {item.gainLoss >= 0 ? '+' : ''}
-                                    {formatNumber(item.gainLoss)}
-                                  </td>
-                                  <td
-                                    className={`px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-right ${rowReturnRate >= 0
-                                      ? 'text-green-600 dark:text-green-400'
-                                      : 'text-red-600 dark:text-red-400'
-                                      }`}
-                                  >
-                                    {formatReturnRate(rowReturnRate)}
-                                  </td>
-                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
-                                    {formatNumber(item.purchaseAmount)}
-                                  </td>
-                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
-                                    {formatNumber(item.quantity)}
-                                  </td>
-                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
-                                    {formatNumber(
-                                      item.currentPrice,
-                                      item.exchangeRate !== 1 ? 2 : 0
-                                    )}
-                                  </td>
-                                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-right">
-                                    {formatNumber(
-                                      item.averagePrice,
-                                      item.exchangeRate !== 1 ? 2 : 0
-                                    )}
-                                  </td>
-                                </tr>
-                              )
-                            })}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                  <StockSnapshotTable
+                    items={recentSnapshotsWithItem}
+                    accentColor={MAIN_COLOR}
+                  />
                 </>
               )
             })()}
