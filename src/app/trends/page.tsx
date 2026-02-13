@@ -61,7 +61,7 @@ export default function TrendsPage() {
       if (data.ok) {
         setStocks(data.data)
         const accounts = Array.from(new Set(data.data.map((s: Stock) => s.accountType)))
-        setSelectedAccounts(accounts.slice(0, 3))
+        setSelectedAccounts(accounts)
       }
     } catch (error) {
       console.error('Error loading stocks:', error)
@@ -118,15 +118,17 @@ export default function TrendsPage() {
       : 7
   const totalChartYDomain: [number, number] = [4, Math.max(5, totalChartYMax)]
 
-  // 계좌별 데이터 준비
+  // 계좌별 데이터 준비 (원 + 만원 단위 for 계좌별 비교 차트)
   const accountTrendData = trends.map((trend) => {
-    const data: Record<string, any> = {
-      date: format(new Date(trend.date), 'MMM dd'),
+    const data: Record<string, number | string> = {
+      date: format(new Date(trend.date), 'M/d'),
       fullDate: trend.date,
     }
     if (trend.byAccount) {
       selectedAccounts.forEach((account) => {
-        data[account] = trend.byAccount?.[account] || 0
+        const value = trend.byAccount?.[account] || 0
+        data[account] = value
+        data[`${account}_만`] = value / 10_000
       })
     }
     return data
@@ -135,7 +137,7 @@ export default function TrendsPage() {
   // 종목별 데이터 준비
   const stockTrendData = trends.map((trend) => {
     const data: Record<string, any> = {
-      date: format(new Date(trend.date), 'MMM dd'),
+      date: format(new Date(trend.date), 'M/d'),
       fullDate: trend.date,
     }
     if (trend.byStock) {
@@ -181,8 +183,8 @@ export default function TrendsPage() {
     }
   }).sort((a, b) => b.value - a.value)
 
-  // 계좌 5개 통합 차트용 데이터 (최근 4일, 맨 앞 일자 대비 변화율 + 툴팁용 실제 평가금액)
-  const topAccounts = accountLatestData.slice(0, 5).map((a) => a.account)
+  // 계좌별 추이 통합 차트용 데이터 (최근 4일, 맨 앞 일자 대비 변화율 + 툴팁용 실제 평가금액)
+  const topAccounts = accountLatestData.map((a) => a.account)
   const accountCombinedChartData = (() => {
     const slice4 = trends.slice(-4)
     if (slice4.length === 0 || topAccounts.length === 0) return []
@@ -525,9 +527,27 @@ export default function TrendsPage() {
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                <YAxis tickFormatter={(value) => formatNumber(value)} tick={{ fontSize: 12 }} />
-                <Tooltip formatter={(value: number) => formatNumber(value)} />
-                <Legend />
+                <YAxis
+                  tickFormatter={
+                    selectedAccounts.length > 0
+                      ? (value: number) => `${value}만`
+                      : (value: number) => formatNumber(value)
+                  }
+                  tick={{ fontSize: 12 }}
+                  width={selectedAccounts.length > 0 ? 40 : undefined}
+                />
+                {selectedAccounts.length > 0 ? (
+                  <Tooltip
+                    formatter={(value: number | undefined, name: string, item: { payload?: Record<string, number> }) => {
+                      const account = String(name).replace(/_만$/, '')
+                      const actual = item?.payload?.[account] ?? 0
+                      return [formatNumber(actual), account]
+                    }}
+                  />
+                ) : (
+                  <Tooltip formatter={(value: number) => formatNumber(value)} />
+                )}
+                <Legend wrapperStyle={{ fontSize: 11 }} iconSize={10} />
                 {selectedAccount || selectedStockId ? (
                   <>
                     <Line type="monotone" dataKey="총평가금액" stroke="#8884d8" strokeWidth={2} />
@@ -539,9 +559,11 @@ export default function TrendsPage() {
                     <Line
                       key={account}
                       type="monotone"
-                      dataKey={account}
-                      stroke={COLORS[index % COLORS.length]}
+                      dataKey={`${account}_만`}
+                      name={account}
+                      stroke={ACCOUNT_CHART_COLORS[index % ACCOUNT_CHART_COLORS.length]}
                       strokeWidth={2}
+                      dot={{ r: 3, fill: ACCOUNT_CHART_COLORS[index % ACCOUNT_CHART_COLORS.length] }}
                     />
                   ))
                 ) : (
