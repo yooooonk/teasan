@@ -162,22 +162,38 @@ export default function StockDetailClient({ stockId }: Props) {
                     }))
                     const max천만 = Math.max(...chartData.map((d) => d.value), 1)
                     const yMax = Math.ceil(max천만 * 1.2) || 10
-                    const deltas: { from: string; to: string; amount: number; pct: number }[] = []
-                    for (let i = 0; i < byDateAsc.length - 1; i++) {
-                      const prev = byDateAsc[i].item
-                      const next = byDateAsc[i + 1].item
-                      const amount = next.valuationAmount - prev.valuationAmount
-                      const pct = prev.valuationAmount !== 0
-                        ? (amount / prev.valuationAmount) * 100
-                        : 0
-                      deltas.push({
-                        from: byDateAsc[i].snapshot.date,
-                        to: byDateAsc[i + 1].snapshot.date,
-                        amount,
-                        pct,
-                      })
+                    const first = byDateAsc[0]
+                    const latest = byDateAsc[byDateAsc.length - 1]
+                    const prev = byDateAsc.length >= 2 ? byDateAsc[byDateAsc.length - 2] : null
+
+                    const deltaFirst: { title: string; amount: number; pct: number } = {
+                      title: '처음보다',
+                      amount: latest.item.valuationAmount - first.item.valuationAmount,
+                      pct:
+                        first.item.valuationAmount !== 0
+                          ? ((latest.item.valuationAmount - first.item.valuationAmount) /
+                            first.item.valuationAmount) *
+                          100
+                          : 0,
                     }
-                    const deltasToShow = deltas.slice(-2)
+                    const deltaPrev =
+                      prev && byDateAsc.length >= 3
+                        ? {
+                          title: '저번보다',
+                          amount: latest.item.valuationAmount - prev.item.valuationAmount,
+                          pct:
+                            prev.item.valuationAmount !== 0
+                              ? ((latest.item.valuationAmount - prev.item.valuationAmount) /
+                                prev.item.valuationAmount) *
+                              100
+                              : 0,
+                        }
+                        : null
+
+                    const cardsToShow = [deltaFirst, deltaPrev].filter(
+                      (c): c is NonNullable<typeof c> => c !== null
+                    )
+
                     return (
                       <div className="mb-6">
                         <div className="rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 p-4 sm:p-6 mb-4">
@@ -244,30 +260,30 @@ export default function StockDetailClient({ stockId }: Props) {
                           </ResponsiveContainer>
                         </div>
                         <h2 className="text-base font-semibold mb-3" style={{ color: MAIN_COLOR }}>
-                          전일 대비 평가 손익차
+                          평가 손익차
                         </h2>
                         <div className="flex gap-4">
-                          {deltasToShow.map((d) => {
+                          {cardsToShow.map((d) => {
                             const isUp = d.amount >= 0
                             return (
                               <div
-                                key={`${d.from}-${d.to}`}
+                                key={d.title}
                                 className="flex-1 min-w-0 rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 p-4"
                               >
                                 <div className="text-sm font-medium mb-1" style={{ color: MAIN_COLOR }}>
-                                  {shortDate(d.from)} → {shortDate(d.to)} 구간
+                                  {d.title}
                                 </div>
                                 <div
-                                  className={`text-xl sm:text-2xl font-bold tabular-nums ${isUp
+                                  className={`text-lg sm:text-xl font-bold tabular-nums text-right ${isUp
                                     ? 'text-emerald-600 dark:text-emerald-400'
                                     : 'text-rose-600 dark:text-rose-400'
                                     }`}
                                 >
                                   {isUp ? '+ ' : ' '}
-                                  {formatNumber(d.amount)} 원
+                                  {formatNumber(d.amount)}원
                                 </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                                  전일 대비 {d.pct >= 0 ? '+ ' : ''}
+                                <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 text-right">
+                                  {d.pct >= 0 ? '+ ' : ''}
                                   {d.pct.toFixed(2)}%
                                 </div>
                               </div>
