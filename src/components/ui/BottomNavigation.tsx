@@ -2,12 +2,15 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { GrHomeRounded, GrLineChart, GrMultiple, GrVirtualStorage } from 'react-icons/gr'
+
+const MAIN_COLOR = '#F7A8B7'
 
 const navItems = [
-    { href: '/', label: '대시보드', icon: '📊' },
-    { href: '/trends', label: '추이', icon: '📈' },
-    { href: '/snapshot', label: '스냅샷', icon: '➕' },
-    { href: '/stockSetting', label: '종목 관리', icon: '📋' },
+    { href: '/', label: '대시보드', icon: GrHomeRounded },
+    { href: '/trends', label: '추이', icon: GrLineChart },
+    { href: '/snapshot', label: '스냅샷', icon: GrMultiple },
+    { href: '/stockSetting', label: '종목 관리', icon: GrVirtualStorage },
 ]
 
 export default function BottomNavigation() {
@@ -23,13 +26,15 @@ export default function BottomNavigation() {
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className={`flex flex-col items-center justify-center flex-1 h-full min-w-0 px-2 transition-all duration-200 ${isActive
-                                    ? 'text-gray-900 dark:text-white'
-                                    : 'text-gray-400 dark:text-gray-500'
-                                    }`}
+                                className={`flex flex-col items-center justify-center flex-1 h-full min-w-0 px-2 transition-all duration-200 ${!isActive ? 'text-gray-400 dark:text-gray-500' : ''}`}
+                                style={isActive ? { color: MAIN_COLOR } : undefined}
                             >
-                                <span className={`text-2xl mb-0.5 transition-transform ${isActive ? 'scale-110' : ''}`}>
-                                    {item.icon}
+                                <span className={`inline-flex items-center justify-center mb-0.5 transition-transform ${isActive ? 'scale-110' : ''}`}>
+                                    {typeof item.icon === 'function' ? (
+                                        <item.icon className="w-6 h-6" />
+                                    ) : (
+                                        <span className="text-2xl">{item.icon}</span>
+                                    )}
                                 </span>
                                 <span className={`text-xs font-medium truncate w-full text-center ${isActive ? 'font-semibold' : 'font-normal'}`}>
                                     {item.label}

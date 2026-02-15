@@ -1,36 +1,25 @@
 import { calculateReturnRate } from "@/lib/calculations";
-import { readJsonFile } from "@/lib/jsonStorage";
+import { getStocks, getSnapshots, getTargets } from "@/lib/db";
+import type { Stock } from "@/types/stock";
 import {
   AccountSummary,
   AssetTypeSummary,
   CurrentAssetStatus,
   StockSummary,
 } from "@/types/analytics";
-import { SnapshotStore } from "@/types/snapshot";
-import { StockStore } from "@/types/stock";
-import { TargetStore } from "@/types/target";
+import type { TargetStore } from "@/types/target";
 import { NextResponse } from "next/server";
-
-const STOCK_FILE = "stock.json";
-const SNAPSHOT_FILE = "snapshots.json";
-const TARGET_FILE = "targets.json";
 
 // GET: 현재 자산 현황 조회
 export async function GET() {
   try {
-    const [stockStore, snapshotStore, targetStore] = await Promise.all([
-      readJsonFile<StockStore>(STOCK_FILE),
-      readJsonFile<SnapshotStore>(SNAPSHOT_FILE),
-      readJsonFile<TargetStore>(TARGET_FILE).catch(() => ({
-        연금: 0,
-        금: 0,
-        해외주식: 0,
-        국내주식: 0,
-      })),
+    const [stocks, snapshots, targetStore] = await Promise.all([
+      getStocks(),
+      getSnapshots(),
+      getTargets(),
     ]);
 
-    // 최신 스냅샷 찾기
-    if (snapshotStore.snapshots.length === 0) {
+    if (snapshots.length === 0) {
       return NextResponse.json({
         ok: true,
         data: {
@@ -45,34 +34,22 @@ export async function GET() {
       });
     }
 
-    // 날짜순 정렬 후 최신 스냅샷
-    const latestSnapshot = [...snapshotStore.snapshots].sort((a, b) =>
-      b.date.localeCompare(a.date),
-    )[0];
+    const latestSnapshot = snapshots[0];
 
-    // 종목 맵 생성
-    const stockMap = new Map(
-      stockStore.stocks.map((stock) => [stock.id, stock]),
-    );
+    const stockMap = new Map(stocks.map((stock: Stock) => [stock.id, stock]));
 
-    // 총합 계산
     let totalValue = 0;
     let totalPurchaseAmount = 0;
     let totalGainLoss = 0;
 
-    // 자산 종류별 집계
     const assetTypeMap = new Map<
       string,
       { purchase: number; value: number; gainLoss: number }
     >();
-
-    // 계좌별 집계
     const accountMap = new Map<
       string,
       { purchase: number; value: number; gainLoss: number }
     >();
-
-    // 종목별 집계
     const stockSummaryMap = new Map<
       string,
       {
@@ -80,7 +57,7 @@ export async function GET() {
         value: number;
         gainLoss: number;
         quantity: number;
-        stock: any;
+        stock: Stock;
       }
     >();
 
@@ -92,7 +69,6 @@ export async function GET() {
       totalPurchaseAmount += item.purchaseAmount;
       totalGainLoss += item.gainLoss;
 
-      // 자산 종류별
       const assetTypeKey = stock.assetGroup;
       const assetTypeData = assetTypeMap.get(assetTypeKey) || {
         purchase: 0,
@@ -104,7 +80,6 @@ export async function GET() {
       assetTypeData.gainLoss += item.gainLoss;
       assetTypeMap.set(assetTypeKey, assetTypeData);
 
-      // 계좌별
       const accountKey = stock.accountType;
       const accountData = accountMap.get(accountKey) || {
         purchase: 0,
@@ -116,7 +91,6 @@ export async function GET() {
       accountData.gainLoss += item.gainLoss;
       accountMap.set(accountKey, accountData);
 
-      // 종목별
       const stockSummaryData = stockSummaryMap.get(item.stockId) || {
         purchase: 0,
         value: 0,
@@ -131,7 +105,6 @@ export async function GET() {
       stockSummaryMap.set(item.stockId, stockSummaryData);
     }
 
-    // 자산 종류별 요약
     const byAssetType: AssetTypeSummary[] = Array.from(
       assetTypeMap.entries(),
     ).map(([assetType, data]) => ({
@@ -143,10 +116,9 @@ export async function GET() {
       targetAmount: targetStore[assetType as keyof TargetStore] || 0,
     }));
 
-    // 계좌별 요약
     const byAccount: AccountSummary[] = Array.from(accountMap.entries()).map(
       ([accountName, data]) => ({
-        accountName,
+        accountType: accountName,
         totalValue: data.value,
         totalPurchaseAmount: data.purchase,
         totalGainLoss: data.gainLoss,
@@ -154,7 +126,6 @@ export async function GET() {
       }),
     );
 
-    // 종목별 요약
     const byStock: StockSummary[] = Array.from(stockSummaryMap.values()).map(
       (data) => ({
         stock: data.stock,

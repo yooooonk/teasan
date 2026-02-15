@@ -4,6 +4,7 @@ import SnapshotDateInput from '@/components/snapshot/SnapshotDateInput'
 import SnapshotSaveButton from '@/components/snapshot/SnapshotSaveButton'
 import SnapshotStockList from '@/components/snapshot/SnapshotStockList'
 import { CreateSnapshotRequest, SnapshotItemForm } from '@/types/snapshot'
+import type { Snapshot } from '@/types/snapshot'
 import { Stock } from '@/types/stock'
 import { format } from 'date-fns'
 import { useEffect, useState } from 'react'
@@ -14,24 +15,42 @@ export default function SnapshotClient() {
     const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
     const [items, setItems] = useState<SnapshotItemForm[]>([])
 
-    // 종목 로드
+    // 종목 로드 + 마지막 스냅샷으로 기본값 채우기
     const loadStocks = async () => {
         try {
-            const res = await fetch('/api/stock')
-            const data = await res.json()
-            if (data.ok) {
-                setStocks(data.data)
-                // 모든 종목을 초기화하여 items에 추가
-                const initialItems: SnapshotItemForm[] = data.data.map((stock: Stock) => ({
-                    ...stock,
-                    currentPrice: 0,
-                    averagePrice: 0,
-                    quantity: 0,
-                    exchangeRate: stock.assetGroup === '해외주식' ? 1 : 1, // 기본값 1
-                    purchaseAmount: stock.assetGroup === '금' ? 0 : undefined, // 금인 경우만 초기화
-                }))
-                setItems(initialItems)
+            const [stockRes, snapshotsRes] = await Promise.all([
+                fetch('/api/stock'),
+                fetch('/api/snapshots'),
+            ])
+            const stockData = await stockRes.json()
+            const snapshotsData = await snapshotsRes.json()
+
+            if (!stockData.ok || !stockData.data) {
+                setLoading(false)
+                return
             }
+
+            const stocksList = stockData.data as Stock[]
+            setStocks(stocksList)
+
+            const latestSnapshot: Snapshot | null =
+                snapshotsData.ok && Array.isArray(snapshotsData.data) && snapshotsData.data.length > 0
+                    ? (snapshotsData.data[0] as Snapshot)
+                    : null
+
+            const initialItems: SnapshotItemForm[] = stocksList.map((stock: Stock) => {
+                const prev = latestSnapshot?.items.find((i) => i.stockId === stock.id)
+                return {
+                    ...stock,
+                    currentPrice: prev?.currentPrice ?? 0,
+                    averagePrice: prev?.averagePrice ?? 0,
+                    quantity: prev?.quantity ?? 0,
+                    exchangeRate: prev?.exchangeRate ?? (stock.assetGroup === '해외주식' ? 1 : 1),
+                    purchaseAmount:
+                        stock.assetGroup === '금' ? (prev?.purchaseAmount ?? 0) : undefined,
+                }
+            })
+            setItems(initialItems)
         } catch (error) {
             console.error('Error loading stocks:', error)
         } finally {

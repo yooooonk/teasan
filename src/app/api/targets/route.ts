@@ -1,19 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { readJsonFile, writeJsonFile } from '@/lib/jsonStorage'
+import { getTargets, setTargets } from '@/lib/db'
 import { TargetStore } from '@/types/target'
-import { AssetGroup } from '@/types/stock'
-
-const TARGET_FILE = 'targets.json'
 
 // GET: 목표 조회
 export async function GET() {
   try {
-    const store = await readJsonFile<TargetStore>(TARGET_FILE).catch(() => ({
-      연금: 0,
-      금: 0,
-      해외주식: 0,
-      국내주식: 0,
-    }))
+    const store = await getTargets()
     return NextResponse.json({ ok: true, data: store })
   } catch (error) {
     console.error('Error reading targets:', error)
@@ -29,7 +21,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
 
-    // Record 형태로 저장
     const store: TargetStore = {
       연금: 0,
       금: 0,
@@ -38,7 +29,7 @@ export async function POST(req: NextRequest) {
       ...body,
     }
 
-    await writeJsonFile(TARGET_FILE, store)
+    await setTargets(store)
 
     return NextResponse.json({
       ok: true,
@@ -52,4 +43,3 @@ export async function POST(req: NextRequest) {
     )
   }
 }
-

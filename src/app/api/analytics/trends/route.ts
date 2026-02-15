@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { readJsonFile } from '@/lib/jsonStorage'
-import { StockStore } from '@/types/stock'
-import { SnapshotStore } from '@/types/snapshot'
+import { getStocks, getSnapshots } from '@/lib/db'
 import { AssetTrend, TrendQuery } from '@/types/analytics'
-
-const STOCK_FILE = 'stock.json'
-const SNAPSHOT_FILE = 'snapshots.json'
 
 // GET: 자산 변화 추이 조회
 export async function GET(req: NextRequest) {
@@ -18,32 +13,21 @@ export async function GET(req: NextRequest) {
       stockId: searchParams.get('stockId') || undefined,
     }
 
-    const [stockStore, snapshotStore] = await Promise.all([
-      readJsonFile<StockStore>(STOCK_FILE),
-      readJsonFile<SnapshotStore>(SNAPSHOT_FILE),
+    const [stocks, snapshots] = await Promise.all([
+      getStocks(),
+      getSnapshots({
+        startDate: query.startDate,
+        endDate: query.endDate,
+      }),
     ])
 
-    // 종목 맵 생성
-    const stockMap = new Map(
-      stockStore.stocks.map((stock) => [stock.id, stock])
+    const stockMap = new Map(stocks.map((stock) => [stock.id, stock]))
+
+    const sortedSnapshots = [...snapshots].sort((a, b) =>
+      a.date.localeCompare(b.date)
     )
 
-    // 필터링된 스냅샷 가져오기
-    let snapshots = [...snapshotStore.snapshots]
-
-    // 날짜 필터링
-    if (query.startDate) {
-      snapshots = snapshots.filter((s) => s.date >= query.startDate!)
-    }
-    if (query.endDate) {
-      snapshots = snapshots.filter((s) => s.date <= query.endDate!)
-    }
-
-    // 날짜순 정렬
-    snapshots.sort((a, b) => a.date.localeCompare(b.date))
-
-    // 트렌드 데이터 생성
-    const trends: AssetTrend[] = snapshots.map((snapshot) => {
+    const trends: AssetTrend[] = sortedSnapshots.map((snapshot) => {
       let totalValue = 0
       let totalPurchaseAmount = 0
       let totalGainLoss = 0
@@ -54,7 +38,6 @@ export async function GET(req: NextRequest) {
         const stock = stockMap.get(item.stockId)
         if (!stock) continue
 
-        // 필터링 적용
         if (query.accountType && stock.accountType !== query.accountType) {
           continue
         }
@@ -66,11 +49,8 @@ export async function GET(req: NextRequest) {
         totalPurchaseAmount += item.purchaseAmount
         totalGainLoss += item.gainLoss
 
-        // 계좌별 집계
         const accountKey = stock.accountType
         byAccount[accountKey] = (byAccount[accountKey] || 0) + item.valuationAmount
-
-        // 종목별 집계
         byStock[item.stockId] = (byStock[item.stockId] || 0) + item.valuationAmount
       }
 
@@ -81,14 +61,9 @@ export async function GET(req: NextRequest) {
         totalGainLoss,
       }
 
-      // 필터가 없을 때만 상세 집계 포함
       if (!query.accountType && !query.stockId) {
-        if (Object.keys(byAccount).length > 0) {
-          trend.byAccount = byAccount
-        }
-        if (Object.keys(byStock).length > 0) {
-          trend.byStock = byStock
-        }
+        if (Object.keys(byAccount).length > 0) trend.byAccount = byAccount
+        if (Object.keys(byStock).length > 0) trend.byStock = byStock
       }
 
       return trend
@@ -103,4 +78,3 @@ export async function GET(req: NextRequest) {
     )
   }
 }
-
