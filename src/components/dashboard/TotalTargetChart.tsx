@@ -38,7 +38,7 @@ export default function TotalTargetChart({
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis tickFormatter={(value) => formatNumberInCheonManwon(value)} />
-        <Tooltip formatter={(value: number) => `${formatNumberInManwon(value)}만원`} />
+        <Tooltip formatter={(value: number | undefined) => `${formatNumberInManwon(value ?? 0)}만원`} />
         <Legend />
         <Bar dataKey="매입금액" stackId="current" fill="#BDE0FE" />
         <Bar dataKey="평가손익" stackId="current" fill="#A2D2FF" />

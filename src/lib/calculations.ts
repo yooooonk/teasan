@@ -55,7 +55,7 @@ export function calculateSnapshotItem(
   averagePrice: number,
   quantity: number,
   exchangeRate: number = 1
-): Omit<SnapshotItem, 'metadataId'> {
+): Omit<SnapshotItem, 'stockId'> {
   const purchaseAmount = calculatePurchaseAmount(averagePrice, quantity, exchangeRate)
   const valuationAmount = calculateValuationAmount(currentPrice, quantity, exchangeRate)
   const gainLoss = calculateGainLoss(valuationAmount, purchaseAmount)

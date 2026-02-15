@@ -404,7 +404,11 @@ export default function TrendsPage() {
                 allowDecimals={false}
               />
               <Tooltip
-                formatter={(value: number, name: string, props: { payload?: { _raw총평가금액?: number } }) => [
+                formatter={(
+                  _value: number | undefined,
+                  _name: string | undefined,
+                  props?: { payload?: { _raw총평가금액?: number } }
+                ) => [
                   formatNumber(props?.payload?._raw총평가금액 ?? 0),
                   '총평가금액',
                 ]}
@@ -539,14 +543,14 @@ export default function TrendsPage() {
                 />
                 {selectedAccounts.length > 0 ? (
                   <Tooltip
-                    formatter={(value: number | undefined, name: string, item: { payload?: Record<string, number> }) => {
-                      const account = String(name).replace(/_만$/, '')
+                    formatter={(value: number | undefined, name: string | undefined, item: { payload?: Record<string, number> }) => {
+                      const account = String(name ?? '').replace(/_만$/, '')
                       const actual = item?.payload?.[account] ?? 0
                       return [formatNumber(actual), account]
                     }}
                   />
                 ) : (
-                  <Tooltip formatter={(value: number) => formatNumber(value)} />
+                  <Tooltip formatter={(value: number | undefined) => formatNumber(value ?? 0)} />
                 )}
                 <Legend wrapperStyle={{ fontSize: 11 }} iconSize={10} />
                 {selectedAccount || selectedStockId ? (

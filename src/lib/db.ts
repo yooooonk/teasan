@@ -66,9 +66,10 @@ export async function getStocks(): Promise<Stock[]> {
 export async function createStock(data: CreateStockRequest): Promise<Stock> {
   const id = `stock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   const now = new Date()
+  const nowStr = now.toISOString()
   await sql`
     INSERT INTO stocks (id, stock_code, asset_group, account_type, stock_name, created_at, updated_at)
-    VALUES (${id}, ${data.stockCode}, ${data.assetGroup}, ${data.accountType}, ${data.stockName}, ${now}, ${now})
+    VALUES (${id}, ${data.stockCode}, ${data.assetGroup}, ${data.accountType}, ${data.stockName}, ${nowStr}, ${nowStr})
   `
   return {
     id,
@@ -147,10 +148,11 @@ export async function getSnapshots(query?: SnapshotQuery): Promise<Snapshot[]> {
   if (snapshotRows.length === 0) return []
 
   const ids = snapshotRows.map((r) => r.id)
+  // ANY()에 배열 전달 - @vercel/postgres 타입은 Primitive만 허용하지만 런타임에서는 배열 지원
   const { rows: itemRows } = await sql`
     SELECT snapshot_id, stock_id, current_price, average_price, quantity, exchange_rate, purchase_amount, valuation_amount, gain_loss
     FROM snapshot_items
-    WHERE snapshot_id = ANY(${ids})
+    WHERE snapshot_id = ANY(${ids as unknown as never})
   `
   const itemsBySnapshot = new Map<string, SnapshotItem[]>()
   for (const row of itemRows as Array<{
@@ -200,9 +202,10 @@ export async function createSnapshot(
   snapshot: Omit<Snapshot, 'createdAt'> & { createdAt?: string }
 ): Promise<Snapshot> {
   const createdAt = snapshot.createdAt ? new Date(snapshot.createdAt) : new Date()
+  const createdAtStr = createdAt.toISOString()
   await sql`
     INSERT INTO snapshots (id, date, created_at)
-    VALUES (${snapshot.id}, ${snapshot.date}, ${createdAt})
+    VALUES (${snapshot.id}, ${snapshot.date}, ${createdAtStr})
   `
   for (let i = 0; i < snapshot.items.length; i++) {
     const item = snapshot.items[i]
