@@ -405,8 +405,8 @@ export default function TrendsPage() {
               />
               <Tooltip
                 formatter={(
-                  _value: number | undefined,
-                  _name: string | undefined,
+                  _value: unknown,
+                  _name: unknown,
                   props?: { payload?: { _raw총평가금액?: number } }
                 ) => [
                   formatNumber(props?.payload?._raw총평가금액 ?? 0),
