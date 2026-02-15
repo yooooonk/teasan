@@ -59,8 +59,9 @@ export default function TrendsPage() {
       const res = await fetch('/api/stock')
       const data = await res.json()
       if (data.ok) {
-        setStocks(data.data)
-        const accounts = Array.from(new Set(data.data.map((s: Stock) => s.accountType)))
+        const stocksData = data.data as Stock[]
+        setStocks(stocksData)
+        const accounts = Array.from(new Set(stocksData.map((s) => s.accountType)))
         setSelectedAccounts(accounts)
       }
     } catch (error) {
