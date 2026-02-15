@@ -16,6 +16,7 @@ import {
   LineChart,
   ResponsiveContainer,
   Tooltip,
+  TooltipPayloadEntry,
   XAxis,
   YAxis,
 } from 'recharts'
@@ -406,13 +407,16 @@ export default function TrendsPage() {
               <Tooltip
                 formatter={(
                   (
-                    _value: unknown,
-                    _name: unknown,
-                    props?: { payload?: { _raw총평가금액?: number } }
-                  ) => [
-                    formatNumber(props?.payload?._raw총평가금액 ?? 0),
-                    '총평가금액',
-                  ]
+                    _value: number,
+                    _name: string,
+                    item: TooltipPayloadEntry<number, string>,
+                    _index: number,
+                    _payload: TooltipPayloadEntry<number, string>[]
+                  ) => {
+                    const raw = (item.payload as { _raw총평가금액?: number } | undefined)
+                      ?._raw총평가금액
+                    return [formatNumber(raw ?? 0), '총평가금액']
+                  }
                 ) as React.ComponentProps<typeof Tooltip>['formatter']}
                 labelStyle={{ color: '#000' }}
               />
