@@ -405,13 +405,15 @@ export default function TrendsPage() {
               />
               <Tooltip
                 formatter={(
-                  _value: unknown,
-                  _name: unknown,
-                  props?: { payload?: { _raw총평가금액?: number } }
-                ) => [
-                  formatNumber(props?.payload?._raw총평가금액 ?? 0),
-                  '총평가금액',
-                ]}
+                  (
+                    _value: unknown,
+                    _name: unknown,
+                    props?: { payload?: { _raw총평가금액?: number } }
+                  ) => [
+                    formatNumber(props?.payload?._raw총평가금액 ?? 0),
+                    '총평가금액',
+                  ]
+                ) as React.ComponentProps<typeof Tooltip>['formatter']}
                 labelStyle={{ color: '#000' }}
               />
               <Area
