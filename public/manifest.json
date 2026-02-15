@@ -1,0 +1,16 @@
+{
+  "name": "투자 대시보드",
+  "short_name": "투자대시보드",
+  "description": "자산별, 계좌별, 종목별 비중 및 자산 변화 추이 시각화",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFBF7",
+  "theme_color": "#F7A8B7",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

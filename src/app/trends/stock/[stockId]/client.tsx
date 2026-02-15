@@ -6,6 +6,7 @@ import {
   type SnapshotWithItem,
 } from '@/components/trends'
 import { formatNumber } from '@/lib/calculations'
+import { toLocalDateString } from '@/lib/date'
 import type { Snapshot } from '@/types/snapshot'
 import type { Stock } from '@/types/stock'
 import { useRouter } from 'next/navigation'
@@ -126,32 +127,33 @@ export default function StockDetailClient({ stockId }: Props) {
         )}
       </header>
 
-      <main className="relative z-10 rounded-t-3xl mt-6 bg-white dark:bg-gray-800 min-h-[80vh] px-6 sm:px-8 pt-8 pb-8 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)] overflow-hidden">
+      <main className="relative z-10 rounded-t-3xl mt-6 bg-white min-h-[80vh] px-6 sm:px-8 pt-8 pb-8 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] overflow-hidden">
         {loading && (
-          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+          <div className="text-center py-12 text-gray-500">
             로딩 중…
           </div>
         )}
         {error && (
-          <div className="py-6 text-red-600 dark:text-red-400">{error}</div>
+          <div className="py-6 text-red-600">{error}</div>
         )}
         {!loading && !error && stock && (
           <>
             {recentSnapshotsWithItem.length > 0 && (() => {
               const byDateDesc = [...recentSnapshotsWithItem].sort((a, b) =>
-                b.snapshot.date.localeCompare(a.snapshot.date)
+                toLocalDateString(b.snapshot.date).localeCompare(toLocalDateString(a.snapshot.date))
               )
               const latest = byDateDesc[0].item
               return (
                 <>
                   <StockDetailCards item={latest} />
                   {recentSnapshotsWithItem.length >= 2 && (() => {
-                    const shortDate = (s: string) => {
-                      const [, m, d] = s.split('-')
+                    const shortDate = (s: string | Date) => {
+                      const str = toLocalDateString(s)
+                      const [, m, d] = str.split('-')
                       return `${Number(m)}/${Number(d)}`
                     }
                     const byDateAsc = [...recentSnapshotsWithItem].sort((a, b) =>
-                      a.snapshot.date.localeCompare(b.snapshot.date)
+                      toLocalDateString(a.snapshot.date).localeCompare(toLocalDateString(b.snapshot.date))
                     )
                     const TEN_MILLION = 10_000_000
                     const chartData = byDateAsc.map(({ snapshot, item }) => ({
@@ -196,7 +198,7 @@ export default function StockDetailClient({ stockId }: Props) {
 
                     return (
                       <div className="mb-6">
-                        <div className="rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 p-4 sm:p-6 mb-4">
+                        <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4 sm:p-6 mb-4">
                           <h2 className="text-base font-semibold mb-4" style={{ color: MAIN_COLOR }}>
                             평가금액 추이
                           </h2>
@@ -219,13 +221,13 @@ export default function StockDetailClient({ stockId }: Props) {
                               </defs>
                               <CartesianGrid
                                 strokeDasharray="3 3"
-                                className="stroke-gray-200 dark:stroke-gray-600"
+                                className="stroke-gray-200"
                               />
                               <XAxis
                                 dataKey="date"
                                 tick={{ fontSize: 12 }}
                                 height={28}
-                                className="text-gray-500 dark:text-gray-400"
+                                className="text-gray-500"
                               />
                               <YAxis
                                 width={52}
@@ -233,7 +235,7 @@ export default function StockDetailClient({ stockId }: Props) {
                                 tickFormatter={(v) => `${v}천만`}
                                 domain={[0, yMax]}
                                 allowDecimals={false}
-                                className="text-gray-500 dark:text-gray-400"
+                                className="text-gray-500"
                               />
                               <Tooltip
                                 formatter={(
@@ -244,9 +246,10 @@ export default function StockDetailClient({ stockId }: Props) {
                                   [formatNumber(item?.payload?.actualValue ?? 0), '평가금액']
                                 }
                                 contentStyle={{ fontSize: 12 }}
-                                labelFormatter={(_, payload) =>
-                                  payload?.[0]?.payload?.fullDate ?? ''
-                                }
+                                labelFormatter={(_, payload) => {
+                                  const raw = payload?.[0]?.payload?.fullDate
+                                  return raw ? toLocalDateString(raw) : ''
+                                }}
                               />
                               <Area
                                 type="monotone"
@@ -268,21 +271,21 @@ export default function StockDetailClient({ stockId }: Props) {
                             return (
                               <div
                                 key={d.title}
-                                className="flex-1 min-w-0 rounded-2xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 p-4"
+                                className="flex-1 min-w-0 rounded-2xl border border-gray-100 bg-gray-50 p-4"
                               >
                                 <div className="text-sm font-medium mb-1" style={{ color: MAIN_COLOR }}>
                                   {d.title}
                                 </div>
                                 <div
                                   className={`text-lg sm:text-xl font-bold tabular-nums text-right ${isUp
-                                    ? 'text-emerald-600 dark:text-emerald-400'
-                                    : 'text-rose-600 dark:text-rose-400'
+                                    ? 'text-emerald-600'
+                                    : 'text-rose-600'
                                     }`}
                                 >
                                   {isUp ? '+ ' : ' '}
                                   {formatNumber(d.amount)}원
                                 </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 text-right">
+                                <div className="text-sm text-gray-500 mt-0.5 text-right">
                                   {d.pct >= 0 ? '+ ' : ''}
                                   {d.pct.toFixed(2)}%
                                 </div>
@@ -301,7 +304,7 @@ export default function StockDetailClient({ stockId }: Props) {
               )
             })()}
             {recentSnapshotsWithItem.length === 0 && (
-              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <div className="text-center py-8 text-gray-500">
                 해당 종목의 스냅샷 데이터가 없습니다.
               </div>
             )}

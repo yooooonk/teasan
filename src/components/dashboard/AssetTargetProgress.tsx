@@ -22,8 +22,8 @@ export default function AssetTargetProgress({ data }: AssetTargetProgressProps) 
     }
 
     return (
-        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-md">
-            <h2 className="text-base sm:text-lg font-semibold mb-4 dark:text-white">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md">
+            <h2 className="text-base sm:text-lg font-semibold mb-4">
                 자산별 목표금액 vs 현재자산
             </h2>
 
@@ -39,13 +39,13 @@ export default function AssetTargetProgress({ data }: AssetTargetProgressProps) 
                     return (
                         <div key={item.assetType}>
                             <div className="mb-2">
-                                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                <span className="text-sm font-medium text-gray-900">
                                     {item.assetType}
                                 </span>
                             </div>
 
                             {/* Progress Bar */}
-                            <div className="relative w-full h-8 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div className="relative w-full h-8 bg-gray-200 rounded-full overflow-hidden">
                                 {/* 매입금액 */}
                                 <div
                                     className="absolute left-0 top-0 h-full transition-all duration-500"

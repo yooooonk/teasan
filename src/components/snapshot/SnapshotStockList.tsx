@@ -8,9 +8,9 @@ interface SnapshotStockListProps {
 
 export default function SnapshotStockList({ items, onItemChange }: SnapshotStockListProps) {
     return (
-        <div className="mb-6 bg-white/80 dark:bg-gray-800 rounded-xl shadow-sm p-6 backdrop-blur-sm">
+        <div className="mb-6 bg-white/80 rounded-xl shadow-sm p-6 backdrop-blur-sm">
             {items.length === 0 ? (
-                <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                <div className="p-8 text-center text-gray-500">
                     종목이 없습니다.
                 </div>
             ) : (

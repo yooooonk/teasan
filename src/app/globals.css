@@ -8,23 +8,9 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
 body {
   color: rgb(var(--foreground-rgb));
   background: #FFFBF7; /* 파스텔 톤과 어울리는 따뜻한 크림 배경 */
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #1a1a1a; /* 다크모드에서는 어두운 배경 유지 */
-  }
 }
 
 /* 하단 네비게이션을 위한 safe area 지원 */
@@ -89,17 +75,4 @@ a[role="button"] {
   scrollbar-width: thin;
 }
 
-@media (prefers-color-scheme: dark) {
-  ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.25);
-  }
-
-  * {
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  }
-}
 

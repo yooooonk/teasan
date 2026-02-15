@@ -39,7 +39,7 @@ export default function StockCard({ stock, onEdit, onDelete }: StockCardProps) {
 
     return (
         <div
-            className="dark:bg-gray-800 rounded-lg p-3 flex items-center gap-4 hover:shadow-md transition-shadow"
+            className="rounded-lg p-3 flex items-center gap-4 hover:shadow-md transition-shadow"
             style={{
                 backgroundColor: colors.bg,
                 // CSS 변수로 텍스트/아이콘 색을 통일 (테마 팔레트)
@@ -54,7 +54,7 @@ export default function StockCard({ stock, onEdit, onDelete }: StockCardProps) {
                 {/* 종목명 (크게) + 코드 (작게) */}
                 <div className="flex-[2] min-w-28">
                     <div
-                        className="dark:text-white font-semibold text-base truncate text-[color:var(--card-text)]"
+                        className="font-semibold text-base truncate text-[color:var(--card-text)]"
                     >
                         {stock.stockName}
                     </div>
@@ -84,14 +84,14 @@ export default function StockCard({ stock, onEdit, onDelete }: StockCardProps) {
             <div className="flex gap-0.5">
                 <button
                     onClick={() => onEdit(stock)}
-                    className="p-1 min-w-0 min-h-0 hover:bg-white/50 dark:hover:bg-gray-700 rounded-lg transition-colors text-[color:var(--card-icon)] hover:text-[color:var(--card-icon-edit-hover)]"
+                    className="p-1 min-w-0 min-h-0 hover:bg-white/50 rounded-lg transition-colors text-[color:var(--card-icon)] hover:text-[color:var(--card-icon-edit-hover)]"
                     aria-label="수정"
                 >
                     <HiPencil />
                 </button>
                 <button
                     onClick={() => onDelete(stock.id)}
-                    className="p-1 min-w-0 min-h-0 hover:bg-white/50 dark:hover:bg-gray-700 rounded-lg transition-colors text-[color:var(--card-icon)] hover:text-[color:var(--card-icon-delete-hover)]"
+                    className="p-1 min-w-0 min-h-0 hover:bg-white/50 rounded-lg transition-colors text-[color:var(--card-icon)] hover:text-[color:var(--card-icon-delete-hover)]"
                     aria-label="삭제"
                 >
                     <HiTrash />

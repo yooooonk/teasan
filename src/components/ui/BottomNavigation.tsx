@@ -18,7 +18,7 @@ export default function BottomNavigation() {
 
     return (
         <div className="fixed bottom-0 left-0 right-0 z-50 safe-area-inset-bottom px-4 pb-4">
-            <nav className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 max-w-md mx-auto">
+            <nav className="bg-white rounded-3xl shadow-lg border border-gray-100 max-w-md mx-auto">
                 <div className="flex justify-around items-center h-16 px-2">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href))
@@ -26,7 +26,7 @@ export default function BottomNavigation() {
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className={`flex flex-col items-center justify-center flex-1 h-full min-w-0 px-2 transition-all duration-200 ${!isActive ? 'text-gray-400 dark:text-gray-500' : ''}`}
+                                className={`flex flex-col items-center justify-center flex-1 h-full min-w-0 px-2 transition-all duration-200 ${!isActive ? 'text-gray-400' : ''}`}
                                 style={isActive ? { color: MAIN_COLOR } : undefined}
                             >
                                 <span className={`inline-flex items-center justify-center mb-0.5 transition-transform ${isActive ? 'scale-110' : ''}`}>

@@ -25,11 +25,11 @@ export default function TargetForm({
   onCancel,
 }: TargetFormProps) {
   return (
-    <div className="mb-6 p-6 bg-white/80 dark:bg-gray-800 rounded-xl shadow-sm backdrop-blur-sm">
+    <div className="mb-6 p-6 bg-white/80 rounded-xl shadow-sm backdrop-blur-sm">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {assetGroups.map((group) => (
           <div key={group}>
-            <label className="block text-sm font-medium mb-2 dark:text-gray-300">
+            <label className="block text-sm font-medium mb-2">
               {assetGroupLabels[group]} 목표금액 (만원) *
             </label>
             <input
@@ -39,7 +39,7 @@ export default function TargetForm({
                 onChange(group, parseFloat(e.target.value) || 0)
               }
               placeholder="목표금액을 입력하세요 (만원)"
-              className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 rounded-lg dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 text-base bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         ))}

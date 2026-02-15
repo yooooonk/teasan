@@ -30,12 +30,12 @@ export default function StockFilters({
         placeholder="종목명 검색"
         value={searchTerm}
         onChange={(e) => onSearchChange(e.target.value)}
-        className="flex-1 px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
+        className="flex-1 px-4 py-3 text-base border border-gray-300 rounded-lg"
       />
       <select
         value={filterAccountType}
         onChange={(e) => onAccountTypeChange(e.target.value as AccountType | '')}
-        className="px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
+        className="px-4 py-3 text-base border border-gray-300 rounded-lg"
       >
         <option value="">전체 계좌종류</option>
         {accountTypes.map((type) => (
@@ -47,7 +47,7 @@ export default function StockFilters({
       <select
         value={filterAssetGroup}
         onChange={(e) => onAssetGroupChange(e.target.value as AssetGroup | '')}
-        className="px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-800 dark:text-white"
+        className="px-4 py-3 text-base border border-gray-300 rounded-lg"
       >
         <option value="">전체 자산군</option>
         {assetGroups.map((group) => (

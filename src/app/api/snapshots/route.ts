@@ -44,11 +44,15 @@ function buildSnapshotItems(
     const isGold = stock?.assetGroup === '금'
 
     if (isGold) {
-      const purchaseAmount = item.averagePrice || 0
-      const valuationAmount = calculateValuationAmount(item.currentPrice, item.quantity, item.exchangeRate)
+      const purchaseAmount = item.averagePrice ?? 0
+      const valuationAmount = calculateValuationAmount(item.currentPrice, item.quantity, item.exchangeRate ?? 1)
       const gainLoss = calculateGainLoss(valuationAmount, purchaseAmount)
       return {
-        ...item,
+        stockId: item.stockId,
+        currentPrice: item.currentPrice,
+        averagePrice: item.averagePrice ?? 0,
+        quantity: item.quantity,
+        exchangeRate: item.exchangeRate ?? 1,
         purchaseAmount,
         valuationAmount,
         gainLoss,
@@ -58,9 +62,18 @@ function buildSnapshotItems(
       item.currentPrice,
       item.averagePrice,
       item.quantity,
-      item.exchangeRate
+      item.exchangeRate ?? 1
     )
-    return { ...item, ...calculated }
+    return {
+      stockId: item.stockId,
+      currentPrice: item.currentPrice,
+      averagePrice: item.averagePrice,
+      quantity: item.quantity,
+      exchangeRate: item.exchangeRate ?? 1,
+      purchaseAmount: calculated.purchaseAmount,
+      valuationAmount: calculated.valuationAmount,
+      gainLoss: calculated.gainLoss,
+    }
   })
 }
 

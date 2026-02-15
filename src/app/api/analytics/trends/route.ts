@@ -23,8 +23,10 @@ export async function GET(req: NextRequest) {
 
     const stockMap = new Map(stocks.map((stock) => [stock.id, stock]))
 
+    const toDateStr = (d: string | Date) =>
+      typeof d === 'string' ? d : new Date(d).toISOString().slice(0, 10)
     const sortedSnapshots = [...snapshots].sort((a, b) =>
-      a.date.localeCompare(b.date)
+      toDateStr(a.date).localeCompare(toDateStr(b.date))
     )
 
     const trends: AssetTrend[] = sortedSnapshots.map((snapshot) => {
@@ -55,7 +57,7 @@ export async function GET(req: NextRequest) {
       }
 
       const trend: AssetTrend = {
-        date: snapshot.date,
+        date: toDateStr(snapshot.date),
         totalValue,
         totalPurchaseAmount,
         totalGainLoss,

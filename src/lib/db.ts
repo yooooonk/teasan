@@ -2,6 +2,7 @@
  * Vercel Postgres 연결 및 쿼리 래퍼
  * - 환경 변수: POSTGRES_URL (Vercel Storage/Postgres 연결 시 자동 주입, 로컬은 .env.local에 설정)
  */
+import crypto from 'node:crypto'
 import { sql } from '@vercel/postgres'
 import type { Stock, CreateStockRequest } from '@/types/stock'
 import type { Snapshot, SnapshotItem, SnapshotQuery } from '@/types/snapshot'
@@ -111,7 +112,7 @@ export async function getSnapshots(query?: SnapshotQuery): Promise<Snapshot[]> {
       SELECT s.id, s.date, s.created_at
       FROM snapshots s
       WHERE s.date = ${query.date}
-      ORDER BY s.date DESC
+      ORDER BY s.date DESC, s.created_at DESC
     `
   } else if (query?.startDate || query?.endDate) {
     if (query.startDate && query.endDate) {
@@ -119,26 +120,26 @@ export async function getSnapshots(query?: SnapshotQuery): Promise<Snapshot[]> {
         SELECT s.id, s.date, s.created_at
         FROM snapshots s
         WHERE s.date >= ${query.startDate} AND s.date <= ${query.endDate}
-        ORDER BY s.date DESC
+        ORDER BY s.date DESC, s.created_at DESC
       `
     } else if (query.startDate) {
       result = await sql`
         SELECT s.id, s.date, s.created_at
         FROM snapshots s
         WHERE s.date >= ${query.startDate}
-        ORDER BY s.date DESC
+        ORDER BY s.date DESC, s.created_at DESC
       `
     } else {
       result = await sql`
         SELECT s.id, s.date, s.created_at
         FROM snapshots s
         WHERE s.date <= ${query.endDate!}
-        ORDER BY s.date DESC
+        ORDER BY s.date DESC, s.created_at DESC
       `
     }
   } else {
     result = await sql`
-      SELECT id, date, created_at FROM snapshots ORDER BY date DESC
+      SELECT id, date, created_at FROM snapshots ORDER BY date DESC, created_at DESC
     `
   }
 
@@ -205,7 +206,7 @@ export async function createSnapshot(
   `
   for (let i = 0; i < snapshot.items.length; i++) {
     const item = snapshot.items[i]
-    const itemId = `si_${snapshot.id}_${i}_${Math.random().toString(36).substr(2, 9)}`
+    const itemId = crypto.randomUUID()
     await sql`
       INSERT INTO snapshot_items (id, snapshot_id, stock_id, current_price, average_price, quantity, exchange_rate, purchase_amount, valuation_amount, gain_loss)
       VALUES (${itemId}, ${snapshot.id}, ${item.stockId}, ${item.currentPrice}, ${item.averagePrice}, ${item.quantity}, ${item.exchangeRate}, ${item.purchaseAmount}, ${item.valuationAmount}, ${item.gainLoss})
@@ -232,7 +233,7 @@ export async function updateSnapshot(
   if (data.items !== undefined) {
     await sql`DELETE FROM snapshot_items WHERE snapshot_id = ${id}`
     for (const item of data.items) {
-      const itemId = `si_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      const itemId = crypto.randomUUID()
       await sql`
         INSERT INTO snapshot_items (id, snapshot_id, stock_id, current_price, average_price, quantity, exchange_rate, purchase_amount, valuation_amount, gain_loss)
         VALUES (${itemId}, ${id}, ${item.stockId}, ${item.currentPrice}, ${item.averagePrice}, ${item.quantity}, ${item.exchangeRate}, ${item.purchaseAmount}, ${item.valuationAmount}, ${item.gainLoss})

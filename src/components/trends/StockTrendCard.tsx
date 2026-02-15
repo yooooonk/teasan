@@ -54,10 +54,18 @@ export function StockTrendCard({
           </span>
         </div>
       </div>
-      <div className="h-12">
+      <div
+        className="h-12"
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={miniChartData}>
             <Tooltip
+              labelFormatter={(_label: string, payload: { payload?: { date?: string } }[]) => {
+                const date = payload?.[0]?.payload?.date
+                return date ?? ''
+              }}
               formatter={(
                 _value: number | undefined,
                 _name: string | undefined,

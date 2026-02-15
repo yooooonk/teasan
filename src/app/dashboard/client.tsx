@@ -46,7 +46,7 @@ export default function DashboardClient() {
 
   if (!status) {
     return (
-      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+      <div className="text-center py-8 text-gray-500">
         데이터가 없습니다.
       </div>
     )
@@ -55,7 +55,7 @@ export default function DashboardClient() {
   return (
     <div className="px-4 py-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-gray-900">
           자산 목표 현황
         </h1>
         <button
@@ -94,44 +94,44 @@ export default function DashboardClient() {
 
       {/* 요약 카드 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
-        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-xl shadow-md">
-          <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">
+        <div className="bg-white p-3 sm:p-4 rounded-xl shadow-md">
+          <div className="text-xs sm:text-sm text-gray-500 mb-1">
             총 평가금액
           </div>
-          <div className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="text-lg sm:text-2xl font-bold text-gray-900">
             {formatNumber(status.totalValue)}
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-xl shadow-md">
-          <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">
+        <div className="bg-white p-3 sm:p-4 rounded-xl shadow-md">
+          <div className="text-xs sm:text-sm text-gray-500 mb-1">
             총 매입금액
           </div>
-          <div className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="text-lg sm:text-2xl font-bold text-gray-900">
             {formatNumber(status.totalPurchaseAmount)}
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-xl shadow-md">
-          <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">
+        <div className="bg-white p-3 sm:p-4 rounded-xl shadow-md">
+          <div className="text-xs sm:text-sm text-gray-500 mb-1">
             총 평가손익
           </div>
           <div
             className={`text-lg sm:text-2xl font-bold ${status.totalGainLoss >= 0
-              ? 'text-green-600 dark:text-green-400'
-              : 'text-red-600 dark:text-red-400'
+              ? 'text-green-600'
+              : 'text-red-600'
               }`}
           >
             {status.totalGainLoss >= 0 ? '+' : ''}
             {formatNumber(status.totalGainLoss)}
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-xl shadow-md">
-          <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1">
+        <div className="bg-white p-3 sm:p-4 rounded-xl shadow-md">
+          <div className="text-xs sm:text-sm text-gray-500 mb-1">
             수익률
           </div>
           <div
             className={`text-lg sm:text-2xl font-bold ${status.totalReturnRate >= 0
-              ? 'text-green-600 dark:text-green-400'
-              : 'text-red-600 dark:text-red-400'
+              ? 'text-green-600'
+              : 'text-red-600'
               }`}
           >
             {formatReturnRate(status.totalReturnRate)}
@@ -141,8 +141,8 @@ export default function DashboardClient() {
 
       {/* 자산군별 파이차트 */}
       {status.byAssetType.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-md mb-4 sm:mb-6">
-          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 dark:text-white">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md mb-4 sm:mb-6">
+          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
             자산군별 분포
           </h2>
           <AssetPieChart data={status.byAssetType} />

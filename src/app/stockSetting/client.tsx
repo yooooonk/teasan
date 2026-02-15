@@ -141,7 +141,7 @@ export default function StockSettingClient() {
     return (
         <div className="px-4 py-4">
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-2xl font-bold text-gray-900">
                     종목 관리
                 </h1>
                 <button
@@ -185,10 +185,10 @@ export default function StockSettingClient() {
 
 
             {/* 리스트 카드 영역 */}
-            <div className="bg-white/80 dark:bg-gray-800 rounded-xl shadow-sm p-6 backdrop-blur-sm">
+            <div className="bg-white/80 rounded-xl shadow-sm p-6 backdrop-blur-sm">
 
                 {filteredStocks.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                    <div className="p-8 text-center text-gray-500">
                         데이터가 없습니다.
                     </div>
                 ) : (

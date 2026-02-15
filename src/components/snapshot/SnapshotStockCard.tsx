@@ -76,16 +76,16 @@ export default function SnapshotStockCard({ item, onChange }: SnapshotStockCardP
 
     return (
         <div
-            className="dark:bg-gray-800 rounded-lg p-4 hover:shadow-md transition-shadow"
+            className="rounded-lg p-4 hover:shadow-md transition-shadow"
             style={{
                 backgroundColor: colors.bg,
                 ['--card-text' as any]: colors.text,
             }}
         >
             {/* 종목 정보 헤더 */}
-            <div className="mb-4 pb-4 border-b border-white/30 dark:border-gray-600/30">
+            <div className="mb-4 pb-4 border-b border-white/30">
                 <div
-                    className="dark:text-white font-semibold text-base text-[color:var(--card-text)]"
+                    className="font-semibold text-base text-[color:var(--card-text)]"
                 >
                     {item.stockName}
                 </div>
@@ -106,7 +106,7 @@ export default function SnapshotStockCard({ item, onChange }: SnapshotStockCardP
                         type="number"
                         value={item.currentPrice || ''}
                         onChange={(e) => handleFieldChange('currentPrice', parseFloat(e.target.value) || 0)}
-                        className="w-full px-4 py-2.5 text-sm bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-white/50 dark:border-gray-600/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/80 dark:focus:ring-gray-500/50 dark:focus:border-gray-500/80 transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-[color:var(--card-text)]"
+                        className="w-full px-4 py-2.5 text-sm bg-white/90 backdrop-blur-sm border border-white/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/80 transition-all duration-200 placeholder:text-gray-400 text-[color:var(--card-text)]"
                         step="0.01"
                         placeholder="0"
                     />
@@ -120,7 +120,7 @@ export default function SnapshotStockCard({ item, onChange }: SnapshotStockCardP
                             type="number"
                             value={item.purchaseAmount || ''}
                             onChange={(e) => handleFieldChange('purchaseAmount', parseFloat(e.target.value) || 0)}
-                            className="w-full px-4 py-2.5 text-sm bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-white/50 dark:border-gray-600/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/80 dark:focus:ring-gray-500/50 dark:focus:border-gray-500/80 transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-[color:var(--card-text)]"
+                            className="w-full px-4 py-2.5 text-sm bg-white/90 backdrop-blur-sm border border-white/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/80 transition-all duration-200 placeholder:text-gray-400 text-[color:var(--card-text)]"
                             step="0.01"
                             placeholder="0"
                         />
@@ -134,7 +134,7 @@ export default function SnapshotStockCard({ item, onChange }: SnapshotStockCardP
                             type="number"
                             value={item.averagePrice || ''}
                             onChange={(e) => handleFieldChange('averagePrice', parseFloat(e.target.value) || 0)}
-                            className="w-full px-4 py-2.5 text-sm bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-white/50 dark:border-gray-600/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/80 dark:focus:ring-gray-500/50 dark:focus:border-gray-500/80 transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-[color:var(--card-text)]"
+                            className="w-full px-4 py-2.5 text-sm bg-white/90 backdrop-blur-sm border border-white/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/80 transition-all duration-200 placeholder:text-gray-400 text-[color:var(--card-text)]"
                             step="0.01"
                             placeholder="0"
                         />
@@ -148,7 +148,7 @@ export default function SnapshotStockCard({ item, onChange }: SnapshotStockCardP
                         type="number"
                         value={item.quantity || ''}
                         onChange={(e) => handleFieldChange('quantity', parseFloat(e.target.value) || 0)}
-                        className="w-full px-4 py-2.5 text-sm bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-white/50 dark:border-gray-600/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/80 dark:focus:ring-gray-500/50 dark:focus:border-gray-500/80 transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-[color:var(--card-text)]"
+                        className="w-full px-4 py-2.5 text-sm bg-white/90 backdrop-blur-sm border border-white/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/80 transition-all duration-200 placeholder:text-gray-400 text-[color:var(--card-text)]"
                         step="0.01"
                         placeholder="0"
                     />
@@ -162,7 +162,7 @@ export default function SnapshotStockCard({ item, onChange }: SnapshotStockCardP
                             type="number"
                             value={item.exchangeRate || ''}
                             onChange={(e) => handleFieldChange('exchangeRate', parseFloat(e.target.value) || 1)}
-                            className="w-full px-4 py-2.5 text-sm bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-white/50 dark:border-gray-600/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/80 dark:focus:ring-gray-500/50 dark:focus:border-gray-500/80 transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-[color:var(--card-text)]"
+                            className="w-full px-4 py-2.5 text-sm bg-white/90 backdrop-blur-sm border border-white/50 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/80 transition-all duration-200 placeholder:text-gray-400 text-[color:var(--card-text)]"
                             step="0.01"
                             placeholder="1"
                         />
@@ -172,7 +172,7 @@ export default function SnapshotStockCard({ item, onChange }: SnapshotStockCardP
 
             {/* 계산 결과 표시 */}
             {(item.purchaseAmount !== undefined || item.valuationAmount !== undefined || item.gainLoss !== undefined) && (
-                <div className="pt-3 border-t border-gray-200 dark:border-gray-700 grid grid-cols-3 gap-2 text-xs">
+                <div className="pt-3 border-t border-gray-200 grid grid-cols-3 gap-2 text-xs">
                     <div>
                         <div className="text-[color:var(--card-text)] opacity-70 mb-1">매입금액</div>
                         <div className="text-[color:var(--card-text)] font-medium">
@@ -189,8 +189,8 @@ export default function SnapshotStockCard({ item, onChange }: SnapshotStockCardP
                         <div className="text-[color:var(--card-text)] opacity-70 mb-1">평가손익</div>
                         <div
                             className={`font-medium ${item.gainLoss !== undefined && item.gainLoss >= 0
-                                ? 'text-green-600 dark:text-green-400'
-                                : 'text-red-600 dark:text-red-400'
+                                ? 'text-green-600'
+                                : 'text-red-600'
                                 }`}
                         >
                             {item.gainLoss !== undefined

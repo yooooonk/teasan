@@ -152,7 +152,7 @@ export default function SnapshotClient() {
 
     return (
         <div className="px-4 py-4">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">
                 스냅샷 입력
             </h1>
 

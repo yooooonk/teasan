@@ -33,7 +33,7 @@ export default function AssetPieChart({ data }: AssetPieChartProps) {
 
   if (chartData.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+      <div className="text-center py-8 text-gray-500">
         데이터가 없습니다.
       </div>
     )

@@ -19,13 +19,13 @@ export default function TotalTargetProgress({
     const gainLossProgress = totalTarget > 0 ? (totalGainLoss / totalTarget) * 100 : 0
 
     return (
-        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-md">
-            <h2 className="text-center text-base sm:text-lg font-semibold mb-3 dark:text-white">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md">
+            <h2 className="text-center text-base sm:text-lg font-semibold mb-3">
                 불어나라 불어나라
             </h2>
 
             {/* Progress Bar */}
-            <div className="relative w-full h-10 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+            <div className="relative w-full h-10 bg-gray-200 rounded-full overflow-hidden">
                 {/* 매입금액 */}
                 <div
                     className="absolute left-0 top-0 h-full transition-all duration-500"

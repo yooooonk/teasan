@@ -22,11 +22,11 @@ export default function StockForm({
     onCancel,
 }: StockFormProps) {
     return (
-        <div className="mb-6 p-6 bg-white/80 dark:bg-gray-800 rounded-xl shadow-sm backdrop-blur-sm">
+        <div className="mb-6 p-6 bg-white/80 rounded-xl shadow-sm backdrop-blur-sm">
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-sm font-medium mb-2 dark:text-gray-300">
+                    <label className="block text-sm font-medium mb-2">
                         종목코드 *
                     </label>
                     <input
@@ -34,11 +34,11 @@ export default function StockForm({
                         value={formData.stockCode}
                         onChange={(e) => onChange({ ...formData, stockCode: e.target.value })}
                         placeholder="종목코드를 입력하세요"
-                        className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 rounded-lg dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 text-base bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium mb-2 dark:text-gray-300">
+                    <label className="block text-sm font-medium mb-2">
                         종목명 *
                     </label>
                     <input
@@ -46,17 +46,17 @@ export default function StockForm({
                         value={formData.stockName}
                         onChange={(e) => onChange({ ...formData, stockName: e.target.value })}
                         placeholder="종목명을 입력하세요"
-                        className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 rounded-lg dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 text-base bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium mb-2 dark:text-gray-300">
+                    <label className="block text-sm font-medium mb-2">
                         자산군 *
                     </label>
                     <select
                         value={formData.assetGroup}
                         onChange={(e) => onChange({ ...formData, assetGroup: e.target.value as AssetGroup })}
-                        className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 rounded-lg dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 text-base bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         {assetGroups.map((group) => (
                             <option key={group} value={group}>
@@ -66,13 +66,13 @@ export default function StockForm({
                     </select>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium mb-2 dark:text-gray-300">
+                    <label className="block text-sm font-medium mb-2">
                         계좌종류 *
                     </label>
                     <select
                         value={formData.accountType}
                         onChange={(e) => onChange({ ...formData, accountType: e.target.value as AccountType })}
-                        className="w-full px-4 py-3 text-base bg-gray-50 dark:bg-gray-700 rounded-lg dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 text-base bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         {accountTypes.map((type) => (
                             <option key={type} value={type}>

@@ -278,24 +278,24 @@ export default function TrendsPage() {
         <div className="flex items-center justify-between mb-2">
           <button
             onClick={() => router.back()}
-            className="p-2 -ml-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+            className="p-2 -ml-2 text-gray-600 hover:text-gray-900"
           >
             ←
           </button>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-300"
+            className="px-3 py-1 text-sm bg-gray-100 rounded-lg text-gray-700"
           >
             필터
           </button>
         </div>
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900">
             {selectedFilterName}
           </h1>
           {trends.length > 0 && (
             <div className="flex items-center justify-center gap-2 mt-1">
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">
+              <span className="text-2xl font-bold text-gray-900">
                 {formatNumber(latestTotal)}
               </span>
               <span className={`text-sm ${isTotalPositive ? 'text-green-600' : 'text-red-600'}`}>
@@ -308,37 +308,37 @@ export default function TrendsPage() {
 
       {/* 필터 섹션 (접을 수 있음) */}
       {showFilters && (
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-4">
+        <div className="bg-white p-4 rounded-xl shadow-md mb-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             <div>
-              <label className="block text-xs font-medium mb-1 dark:text-gray-300">시작일</label>
+              <label className="block text-xs font-medium mb-1">시작일</label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 text-base border border-gray-300 rounded-lg"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1 dark:text-gray-300">종료일</label>
+              <label className="block text-xs font-medium mb-1">종료일</label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 text-base border border-gray-300 rounded-lg"
               />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium mb-1 dark:text-gray-300">계좌 필터</label>
+              <label className="block text-xs font-medium mb-1">계좌 필터</label>
               <select
                 value={selectedAccount}
                 onChange={(e) => {
                   setSelectedAccount(e.target.value)
                   setSelectedStockId('')
                 }}
-                className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 text-base border border-gray-300 rounded-lg"
               >
                 <option value="">전체</option>
                 {accounts.map((account) => (
@@ -349,14 +349,14 @@ export default function TrendsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1 dark:text-gray-300">종목 필터</label>
+              <label className="block text-xs font-medium mb-1">종목 필터</label>
               <select
                 value={selectedStockId}
                 onChange={(e) => {
                   setSelectedStockId(e.target.value)
                   setSelectedAccount('')
                 }}
-                className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 text-base border border-gray-300 rounded-lg"
               >
                 <option value="">전체</option>
                 {stocks.map((stock) => (
@@ -372,13 +372,13 @@ export default function TrendsPage() {
 
       {/* 총 자산 차트 (Total Cases 스타일) */}
       {trends.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-md mb-4">
+        <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md mb-4">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold dark:text-white">총 자산</h2>
+            <h2 className="text-lg font-semibold">총 자산</h2>
             <select
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
-              className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
+              className="px-3 py-1 text-sm border border-gray-300 rounded-lg"
             >
               <option value="Day">일</option>
               <option value="Week">주</option>
@@ -427,8 +427,8 @@ export default function TrendsPage() {
         !selectedStockId &&
         accountCombinedChartData.length > 0 &&
         topAccounts.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-md mb-4">
-            <h2 className="text-lg font-semibold dark:text-white mb-4">계좌별 추이</h2>
+          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md mb-4">
+            <h2 className="text-lg font-semibold mb-4">계좌별 추이</h2>
             <ResponsiveContainer width="100%" height={280}>
               <LineChart
                 data={accountCombinedChartData}
@@ -437,7 +437,7 @@ export default function TrendsPage() {
                 <CartesianGrid
                   strokeDasharray="3 3"
                   stroke="#e0e0e0"
-                  className="dark:stroke-gray-600"
+                  className="stroke-gray-600"
                 />
                 <XAxis
                   dataKey="date"
@@ -505,8 +505,8 @@ export default function TrendsPage() {
       {/* 상세 차트 (필터링된 경우 또는 선택된 계좌/종목) */}
       {(selectedAccount || selectedStockId || selectedAccounts.length > 0 || selectedStockIds.length > 0) &&
         trends.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-md mb-4">
-            <h2 className="text-lg font-semibold mb-4 dark:text-white">
+          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md mb-4">
+            <h2 className="text-lg font-semibold mb-4">
               {selectedAccount
                 ? `${selectedAccount} 자산 변화`
                 : selectedStockId
@@ -586,7 +586,7 @@ export default function TrendsPage() {
         )}
 
       {trends.length === 0 && (
-        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+        <div className="text-center py-8 text-gray-500">
           해당 기간의 데이터가 없습니다.
         </div>
       )}
