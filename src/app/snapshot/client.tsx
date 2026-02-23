@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react'
 export default function SnapshotClient() {
     const [stocks, setStocks] = useState<Stock[]>([])
     const [loading, setLoading] = useState(true)
+    const [saving, setSaving] = useState(false)
     const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
     const [items, setItems] = useState<SnapshotItemForm[]>([])
 
@@ -88,6 +89,7 @@ export default function SnapshotClient() {
             return
         }
 
+        setSaving(true)
         try {
             const requestData: CreateSnapshotRequest = {
                 date,
@@ -139,6 +141,8 @@ export default function SnapshotClient() {
         } catch (error) {
             console.error('Error saving snapshot:', error)
             alert('저장 중 오류가 발생했습니다.')
+        } finally {
+            setSaving(false)
         }
     }
 
@@ -158,7 +162,7 @@ export default function SnapshotClient() {
 
             <SnapshotDateInput date={date} onChange={setDate} />
             <SnapshotStockList items={items} onItemChange={handleItemChange} />
-            <SnapshotSaveButton onClick={handleSave} />
+            <SnapshotSaveButton onClick={handleSave} saving={saving} />
         </div>
     )
 }
