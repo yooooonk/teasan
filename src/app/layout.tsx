@@ -1,4 +1,4 @@
-import BottomNavigation from '@/components/ui/BottomNavigation'
+import NavWrapper from '@/components/ui/NavWrapper'
 import ContentArea from '@/components/ui/ContentArea'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -28,7 +28,7 @@ export default function RootLayout({
         <main className="min-h-screen pb-24">
           <ContentArea>{children}</ContentArea>
         </main>
-        <BottomNavigation />
+        <NavWrapper />
       </body>
     </html>
   )
