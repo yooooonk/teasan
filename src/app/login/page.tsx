@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
+import Spinner from '@/components/ui/Spinner'
 import { FormEvent, Suspense, useState } from 'react'
 
 function LoginForm() {
@@ -73,7 +74,13 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center px-6">
-      <Suspense fallback={<div className="text-gray-500">로딩 중...</div>}>
+      <Suspense
+        fallback={
+          <div className="flex justify-center py-8">
+            <Spinner />
+          </div>
+        }
+      >
         <LoginForm />
       </Suspense>
     </div>

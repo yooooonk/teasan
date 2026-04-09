@@ -1,12 +1,13 @@
 'use client'
 
+import { StockTrendCard } from '@/components/trends'
+import Spinner from '@/components/ui/Spinner'
 import { formatNumber } from '@/lib/calculations'
 import { AssetTrend } from '@/types/analytics'
 import { Stock } from '@/types/stock'
 import { format, subDays } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { StockTrendCard } from '@/components/trends'
 import {
   Area,
   AreaChart,
@@ -270,7 +271,11 @@ export default function TrendsPage() {
   const isTotalPositive = totalChange >= 0
 
   if (loading) {
-    return <div className="text-center py-8">로딩 중...</div>
+    return (
+      <div className="flex justify-center py-8">
+        <Spinner />
+      </div>
+    )
   }
 
   return (

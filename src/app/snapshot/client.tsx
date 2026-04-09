@@ -3,6 +3,7 @@
 import SnapshotDateInput from '@/components/snapshot/SnapshotDateInput'
 import SnapshotSaveButton from '@/components/snapshot/SnapshotSaveButton'
 import SnapshotStockList from '@/components/snapshot/SnapshotStockList'
+import Spinner from '@/components/ui/Spinner'
 import { CreateSnapshotRequest, SnapshotItemForm } from '@/types/snapshot'
 import type { Snapshot } from '@/types/snapshot'
 import { Stock } from '@/types/stock'
@@ -151,7 +152,11 @@ export default function SnapshotClient() {
     }, [])
 
     if (loading) {
-        return <div className="text-center py-8">로딩 중...</div>
+        return (
+            <div className="flex justify-center py-8">
+                <Spinner />
+            </div>
+        )
     }
 
     return (

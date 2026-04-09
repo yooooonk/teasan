@@ -1,6 +1,7 @@
 'use client'
 
 import TargetForm from '@/components/targets/TargetForm'
+import Spinner from '@/components/ui/Spinner'
 import { AssetGroup } from '@/types/stock'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -86,7 +87,11 @@ export default function TargetsClient() {
   }
 
   if (loading) {
-    return <div className="text-center py-8">로딩 중...</div>
+    return (
+      <div className="flex justify-center py-8">
+        <Spinner />
+      </div>
+    )
   }
 
   return (

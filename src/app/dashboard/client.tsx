@@ -4,6 +4,7 @@ import AssetPieChart from '@/components/dashboard/AssetPieChart'
 import AssetTargetProgress from '@/components/dashboard/AssetTargetProgress'
 import StockTable from '@/components/dashboard/StockTable'
 import TotalTargetProgress from '@/components/dashboard/TotalTargetProgress'
+import Spinner from '@/components/ui/Spinner'
 import { formatNumber, formatReturnRate } from '@/lib/calculations'
 import { CurrentAssetStatus } from '@/types/analytics'
 import { useRouter } from 'next/navigation'
@@ -41,7 +42,11 @@ export default function DashboardClient() {
     ) || 0
 
   if (loading) {
-    return <div className="text-center py-8">로딩 중...</div>
+    return (
+      <div className="flex justify-center py-8">
+        <Spinner />
+      </div>
+    )
   }
 
   if (!status) {

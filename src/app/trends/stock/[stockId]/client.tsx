@@ -5,6 +5,7 @@ import {
   StockSnapshotTable,
   type SnapshotWithItem,
 } from '@/components/trends'
+import Spinner from '@/components/ui/Spinner'
 import { formatNumber } from '@/lib/calculations'
 import { toLocalDateString } from '@/lib/date'
 import type { Snapshot } from '@/types/snapshot'
@@ -129,8 +130,8 @@ export default function StockDetailClient({ stockId }: Props) {
 
       <main className="relative z-10 rounded-t-3xl mt-6 bg-white min-h-[80vh] px-6 sm:px-8 pt-8 pb-8 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] overflow-hidden">
         {loading && (
-          <div className="text-center py-12 text-gray-500">
-            로딩 중…
+          <div className="flex justify-center py-12">
+            <Spinner />
           </div>
         )}
         {error && (

@@ -1,0 +1,67 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  height: 40rem;
+}
+
+.flowers {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.flower {
+  width: 28px;
+  height: auto;
+  display: block;
+  animation: flowerBlink 1.05s ease-in-out infinite;
+}
+
+.flower:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.flower:nth-child(2) {
+  animation-delay: 0.35s;
+}
+
+.flower:nth-child(3) {
+  animation-delay: 0.7s;
+}
+
+@keyframes flowerBlink {
+  0%,
+  70%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+
+  35% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+/* 클레이/버블 느낌: 다층 text-shadow로 하이라이트·음영·외곽 떠 있는 느낌 근사 */
+.text {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #ffb6cadd;
+  -webkit-font-smoothing: antialiased;
+  text-shadow:
+    -0.5px -0.5px 0 rgba(255, 255, 255, 0.95),
+    -1px -2px 3px rgba(255, 255, 255, 0.45),
+    0.5px 0.5px 0 rgba(200, 170, 150, 0.35),
+    1px 1.5px 0 rgba(190, 155, 135, 0.25),
+    1.5px 2px 2px rgba(170, 130, 110, 0.15),
+    0 3px 10px rgba(80, 50, 40, 0.12),
+    0 6px 20px rgba(60, 40, 30, 0.06);
+}
