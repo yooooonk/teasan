@@ -37,11 +37,11 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-xs">
-      <h1 className="text-xl font-semibold text-center text-gray-800 mb-2">
+      <h1 className="text-xl font-semibold text-center text-[var(--theme-text)] mb-2">
         티끌모아 태산
       </h1>
-      <p className="text-sm text-gray-500 text-center mb-6">
-
+      <p className="text-sm text-[var(--theme-text-muted)] text-center mb-6">
+        비밀번호를 입력하세요
       </p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -50,7 +50,7 @@ function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="비밀번호"
           autoComplete="current-password"
-          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#F7A8B7] focus:ring-2 focus:ring-[#F7A8B7]/20 outline-none transition"
+          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring-2 focus:ring-[var(--theme-primary)]/25 outline-none transition"
           autoFocus
           disabled={loading}
         />
@@ -61,7 +61,7 @@ function LoginForm() {
           type="submit"
           disabled={loading}
           className="w-full py-3 rounded-xl font-medium text-white transition opacity-90 hover:opacity-100 disabled:opacity-60"
-          style={{ backgroundColor: '#F7A8B7' }}
+          style={{ backgroundColor: 'var(--theme-primary)' }}
         >
           {loading ? '확인 중…' : '입장'}
         </button>

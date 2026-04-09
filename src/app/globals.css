@@ -3,14 +3,33 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 62, 52, 58;
+  --background-start-rgb: 253, 246, 250;
+  --background-end-rgb: 255, 251, 254;
+  /* 손그림 스프라이트 톤에 맞춘 파스텔 테마 */
+  --app-bg: #fdf6fa;
+  --app-bg-gradient-end: #fff9fc;
+  --theme-primary: #e8a4bc;
+  --theme-primary-deep: #d989a8;
+  --theme-accent-coral: #e8909a;
+  --theme-mint: #c8f0e2;
+  --theme-sky: #d4e9f7;
+  --theme-surface: #fffbfe;
+  /* nav-sprite.png 타일 배경과 맞춘 연한 핑크 베이지 */
+  --nav-bar-bg: #fadde0;
+  --theme-text: #3e343a;
+  --theme-text-muted: #9d8b95;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: #FFFBF7; /* 파스텔 톤과 어울리는 따뜻한 크림 배경 */
+  color: var(--theme-text);
+  background: var(--app-bg);
+  background-image: linear-gradient(
+    180deg,
+    var(--app-bg) 0%,
+    var(--app-bg-gradient-end) 100%
+  );
+  min-height: 100vh;
 }
 
 /* 하단 네비게이션을 위한 safe area 지원 */
