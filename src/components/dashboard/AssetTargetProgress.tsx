@@ -1,16 +1,9 @@
 'use client'
 
 import { formatNumberInManwon } from '@/lib/calculations'
+import { ASSET_GROUP_CHART_COLORS } from '@/lib/assetGroupColors'
 import { AssetTypeSummary } from '@/types/analytics'
 import { AssetGroup } from '@/types/stock'
-
-// 자산군별 색상 팔레트 (AssetPieChart와 동일)
-const assetGroupColors: Record<AssetGroup, { primary: string; secondary: string }> = {
-    연금: { primary: '#CDB4DB', secondary: '#B8A3C7' },
-    금: { primary: '#FFC8DD', secondary: '#FFB3D1' },
-    해외주식: { primary: '#BDE0FE', secondary: '#A2D2FF' },
-    국내주식: { primary: '#A2D2FF', secondary: '#8BC5FF' },
-}
 
 interface AssetTargetProgressProps {
     data: AssetTypeSummary[]
@@ -31,10 +24,13 @@ export default function AssetTargetProgress({ data }: AssetTargetProgressProps) 
                 {data.map((item) => {
                     const target = item.targetAmount || 0
                     const current = item.totalPurchaseAmount + item.totalGainLoss
-                    const progress = target > 0 ? (current / target) * 100 : 0
                     const purchaseProgress = target > 0 ? (item.totalPurchaseAmount / target) * 100 : 0
                     const gainLossProgress = target > 0 ? (item.totalGainLoss / target) * 100 : 0
-                    const colors = assetGroupColors[item.assetType as AssetGroup] || { primary: '#BDE0FE', secondary: '#A2D2FF' }
+                    const colors =
+                      ASSET_GROUP_CHART_COLORS[item.assetType as AssetGroup] || {
+                        primary: 'var(--theme-primary)',
+                        secondary: 'var(--theme-sky)',
+                      }
 
                     return (
                         <div key={item.assetType}>
@@ -81,7 +77,7 @@ export default function AssetTargetProgress({ data }: AssetTargetProgressProps) 
                                     <span
                                         className="text-xs font-semibold px-1"
                                         style={{
-                                            color: '#1F2937',
+                                            color: 'var(--theme-text)',
                                             textShadow: '0 1px 2px rgba(255, 255, 255, 0.8), 0 0 4px rgba(255, 255, 255, 0.6)',
                                         }}
                                     >
@@ -93,7 +89,7 @@ export default function AssetTargetProgress({ data }: AssetTargetProgressProps) 
                                     <span
                                         className="text-xs font-semibold px-1"
                                         style={{
-                                            color: '#1F2937',
+                                            color: 'var(--theme-text)',
                                             textShadow: '0 1px 2px rgba(255, 255, 255, 0.8), 0 0 4px rgba(255, 255, 255, 0.6)',
                                         }}
                                     >

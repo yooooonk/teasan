@@ -78,23 +78,8 @@ export default function DashboardClient() {
           </button>
           <button
             onClick={() => router.push('/targets')}
-          className="px-4 py-1.5 text-white rounded-2xl font-medium min-h-[44px] transition-colors"
-          style={{
-            backgroundColor: '#FBA2AB',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#FEA38E'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#FBA2AB'
-          }}
-          onMouseDown={(e) => {
-            e.currentTarget.style.backgroundColor = '#F3B5A0'
-          }}
-          onMouseUp={(e) => {
-            e.currentTarget.style.backgroundColor = '#FBA2AB'
-          }}
-        >
+            className="px-4 py-1.5 text-white rounded-2xl font-medium min-h-[44px] transition-colors bg-[var(--theme-primary)] hover:bg-[var(--theme-primary-deep)] active:bg-[var(--theme-primary-deep)]"
+          >
           목표입력
         </button>
         </div>

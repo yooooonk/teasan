@@ -85,44 +85,13 @@ export default function StockForm({
             <div className="mt-6 flex gap-3">
                 <button
                     onClick={onSave}
-                    className="flex-1 px-6 py-2 text-white rounded-2xl font-medium min-h-[44px] transition-colors"
-                    style={{
-                        backgroundColor: '#FBA2AB',
-                    }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#FEA38E'
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#FBA2AB'
-                    }}
-                    onMouseDown={(e) => {
-                        e.currentTarget.style.backgroundColor = '#F3B5A0'
-                    }}
-                    onMouseUp={(e) => {
-                        e.currentTarget.style.backgroundColor = '#FBA2AB'
-                    }}
+                    className="flex-1 px-6 py-2 text-white rounded-2xl font-medium min-h-[44px] transition-colors bg-[var(--theme-primary)] hover:bg-[var(--theme-primary-deep)] active:bg-[var(--theme-primary-deep)]"
                 >
                     저장
                 </button>
                 <button
                     onClick={onCancel}
-                    className="flex-1 px-6 py-2 rounded-2xl font-medium min-h-[44px] transition-colors"
-                    style={{
-                        backgroundColor: '#F6E6D0',
-                        color: '#8B6F47',
-                    }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#FFDFC3'
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#F6E6D0'
-                    }}
-                    onMouseDown={(e) => {
-                        e.currentTarget.style.backgroundColor = '#F3B5A0'
-                    }}
-                    onMouseUp={(e) => {
-                        e.currentTarget.style.backgroundColor = '#F6E6D0'
-                    }}
+                    className="flex-1 px-6 py-2 rounded-2xl font-medium min-h-[44px] transition-colors bg-[var(--theme-surface)] text-[var(--theme-text)] hover:bg-[var(--nav-bar-bg)] active:bg-[var(--nav-bar-bg)]"
                 >
                     취소
                 </button>

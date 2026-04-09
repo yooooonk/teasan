@@ -7,18 +7,32 @@
   --background-start-rgb: 253, 246, 250;
   --background-end-rgb: 255, 251, 254;
   /* 손그림 스프라이트 톤에 맞춘 파스텔 테마 */
-  --app-bg: #fdf6fa;
-  --app-bg-gradient-end: #fff9fc;
-  --theme-primary: #e8a4bc;
-  --theme-primary-deep: #d989a8;
-  --theme-accent-coral: #e8909a;
-  --theme-mint: #c8f0e2;
-  --theme-sky: #d4e9f7;
-  --theme-surface: #fffbfe;
-  /* nav-sprite.png 타일 배경과 맞춘 연한 핑크 베이지 */
-  --nav-bar-bg: #fadde0;
-  --theme-text: #3e343a;
-  --theme-text-muted: #9d8b95;
+  /* Image palette 기반 토큰 */
+  --app-bg: #fbf6f8; /* background */
+  --app-bg-gradient-end: #fffafc;
+  --theme-surface: #f6dadf; /* surface */
+
+  --theme-primary: #e58aa3; /* pink (primary) */
+  --theme-primary-deep: #d86f8e; /* deeper pink */
+  --theme-accent-coral: #f3afc1; /* soft pink */
+
+  --theme-mint: #9acf6a; /* sprout */
+  --theme-sky: #79bfd9; /* blue petals */
+  --theme-yellow: #f2c84d; /* flower center */
+  --theme-brown: #a67c52; /* stem/soil */
+
+  /* nav bar panel pink */
+  --nav-bar-bg: #fbdee1;
+
+  --theme-text: #6e6a73;
+  --theme-text-muted: #9a96a0;
+  --theme-border: #ead6db;
+
+  /* 연한 틴트(카드/배경용) */
+  --tint-sky: #e8f4fa;
+  --tint-pink: #fce8ee;
+  --tint-yellow: #fdf8e8;
+  --tint-mint: #e0f0ec;
 }
 
 body {
@@ -60,7 +74,9 @@ a[role="button"] {
 
   /* 카드 호버 효과 제거 (모바일에서는 불필요) */
   .card-hover {
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
   }
 
   .card-hover:active {
@@ -93,5 +109,3 @@ a[role="button"] {
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
   scrollbar-width: thin;
 }
-
-

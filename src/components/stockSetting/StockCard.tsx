@@ -1,32 +1,8 @@
 'use client'
 
-import { AssetGroup, Stock } from '@/types/stock';
-import { HiPencil, HiTrash } from 'react-icons/hi';
-
-// 자산군별 색상 팔레트 (요청 팔레트)
-// #CDB4DB, #FFC8DD, #FFAFCC, #BDE0FE, #A2D2FF
-const assetGroupColors: Record<AssetGroup, { bg: string; border: string; text: string }> = {
-    '연금': {
-        bg: '#CDB4DB',
-        border: '#BDE0FE',
-        text: '#2B2D42',
-    },
-    '금': {
-        bg: '#FFC8DD',
-        border: '#FFAFCC',
-        text: '#2B2D42',
-    },
-    '해외주식': {
-        bg: '#BDE0FE',
-        border: '#A2D2FF',
-        text: '#2B2D42',
-    },
-    '국내주식': {
-        bg: '#A2D2FF',
-        border: '#BDE0FE',
-        text: '#2B2D42',
-    },
-};
+import { ASSET_GROUP_CARD_COLORS } from '@/lib/assetGroupColors'
+import { Stock } from '@/types/stock'
+import { HiPencil, HiTrash } from 'react-icons/hi'
 
 interface StockCardProps {
     stock: Stock
@@ -35,7 +11,7 @@ interface StockCardProps {
 }
 
 export default function StockCard({ stock, onEdit, onDelete }: StockCardProps) {
-    const colors = assetGroupColors[stock.assetGroup]
+    const colors = ASSET_GROUP_CARD_COLORS[stock.assetGroup]
 
     return (
         <div

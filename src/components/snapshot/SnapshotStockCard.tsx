@@ -1,32 +1,8 @@
 'use client'
 
 import { calculateSnapshotItem, formatNumber } from '@/lib/calculations'
+import { ASSET_GROUP_CARD_COLORS } from '@/lib/assetGroupColors'
 import { SnapshotItemForm } from '@/types/snapshot'
-import { AssetGroup } from '@/types/stock'
-
-// 자산군별 색상 팔레트 (StockCard와 동일)
-const assetGroupColors: Record<AssetGroup, { bg: string; border: string; text: string }> = {
-    '연금': {
-        bg: '#CDB4DB',
-        border: '#BDE0FE',
-        text: '#2B2D42',
-    },
-    '금': {
-        bg: '#FFC8DD',
-        border: '#FFAFCC',
-        text: '#2B2D42',
-    },
-    '해외주식': {
-        bg: '#BDE0FE',
-        border: '#A2D2FF',
-        text: '#2B2D42',
-    },
-    '국내주식': {
-        bg: '#A2D2FF',
-        border: '#BDE0FE',
-        text: '#2B2D42',
-    },
-}
 
 interface SnapshotStockCardProps {
     item: SnapshotItemForm
@@ -34,7 +10,7 @@ interface SnapshotStockCardProps {
 }
 
 export default function SnapshotStockCard({ item, onChange }: SnapshotStockCardProps) {
-    const colors = assetGroupColors[item.assetGroup]
+    const colors = ASSET_GROUP_CARD_COLORS[item.assetGroup]
     const isOverseas = item.assetGroup === '해외주식'
     const isGold = item.assetGroup === '금'
 

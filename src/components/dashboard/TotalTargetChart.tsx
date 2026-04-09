@@ -40,9 +40,9 @@ export default function TotalTargetChart({
         <YAxis tickFormatter={(value) => formatNumberInCheonManwon(value)} />
         <Tooltip formatter={(value: number | undefined) => `${formatNumberInManwon(value ?? 0)}만원`} />
         <Legend />
-        <Bar dataKey="매입금액" stackId="current" fill="#BDE0FE" />
-        <Bar dataKey="평가손익" stackId="current" fill="#A2D2FF" />
-        <Bar dataKey="목표" fill="#CDB4DB" />
+        <Bar dataKey="매입금액" stackId="current" fill="var(--theme-primary)" />
+        <Bar dataKey="평가손익" stackId="current" fill="var(--theme-sky)" />
+        <Bar dataKey="목표" fill="var(--theme-mint)" />
       </BarChart>
     </ResponsiveContainer>
   )

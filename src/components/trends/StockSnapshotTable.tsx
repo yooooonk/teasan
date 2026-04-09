@@ -25,7 +25,7 @@ function toDateOnly(date: string | Date): string {
   return toLocalDateString(date)
 }
 
-export function StockSnapshotTable({ items, accentColor = '#F7A8B7' }: Props) {
+export function StockSnapshotTable({ items, accentColor = 'var(--theme-primary)' }: Props) {
   const sorted = [...items].sort((a, b) =>
     toDateOnly(b.snapshot.date).localeCompare(toDateOnly(a.snapshot.date))
   )

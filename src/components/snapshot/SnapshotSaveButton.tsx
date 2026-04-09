@@ -13,24 +13,7 @@ export default function SnapshotSaveButton({ onClick, saving = false }: Snapshot
           onClick()
         }}
         disabled={saving}
-        className="px-8 py-3 text-white rounded-2xl font-medium min-h-[44px] transition-colors inline-flex items-center justify-center gap-2 disabled:opacity-70 disabled:pointer-events-none"
-        style={{
-          backgroundColor: saving ? '#d1a0a6' : '#FBA2AB',
-        }}
-        onMouseEnter={(e) => {
-          if (saving) return
-          e.currentTarget.style.backgroundColor = '#FEA38E'
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = saving ? '#d1a0a6' : '#FBA2AB'
-        }}
-        onMouseDown={(e) => {
-          if (saving) return
-          e.currentTarget.style.backgroundColor = '#F3B5A0'
-        }}
-        onMouseUp={(e) => {
-          e.currentTarget.style.backgroundColor = saving ? '#d1a0a6' : '#FBA2AB'
-        }}
+        className="px-8 py-3 text-white rounded-2xl font-medium min-h-[44px] transition-colors inline-flex items-center justify-center gap-2 disabled:opacity-70 disabled:pointer-events-none bg-[var(--theme-primary)] hover:bg-[var(--theme-primary-deep)] active:bg-[var(--theme-primary-deep)]"
       >
         {saving ? (
           <>

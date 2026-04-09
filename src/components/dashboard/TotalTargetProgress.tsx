@@ -53,15 +53,15 @@ export default function TotalTargetProgress({
                         className="rotate-[-90deg]"
                     >
                         <defs>
-                            {/* 매수금액: 연한 핑크 그라데이션 */}
+                            {/* 매수금액: 진한 분홍 그라데이션 */}
                             <linearGradient id="purchaseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#FAD4DF" />
-                                <stop offset="100%" stopColor="#EBB2C3" />
+                                <stop offset="0%" stopColor="var(--theme-primary-deep)" />
+                                <stop offset="100%" stopColor="var(--theme-primary)" />
                             </linearGradient>
-                            {/* 평가손익(+): 예시 이미지처럼 핑크 → 블루 그라데이션 */}
+                            {/* 평가손익(+): 파란색(스카이) */}
                             <linearGradient id="gainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#EBB2C3" />
-                                <stop offset="100%" stopColor="#BDE0FE" />
+                                <stop offset="0%" stopColor="var(--theme-sky)" />
+                                <stop offset="100%" stopColor="var(--theme-sky)" />
                             </linearGradient>
                         </defs>
                         {/* 트랙 (배경 원) */}
@@ -70,7 +70,7 @@ export default function TotalTargetProgress({
                             cy={CY}
                             r={R}
                             fill="none"
-                            stroke="#E5E7EB"
+                            stroke="var(--tint-pink)"
                             strokeWidth={STROKE}
                         />
                         {/* 매수금액 진행 (기존과 동일: 파란색 계열) */}
@@ -107,7 +107,7 @@ export default function TotalTargetProgress({
                                 cx={markerX}
                                 cy={markerY}
                                 r={8}
-                                fill="#CDB4DB"
+                                fill="var(--theme-yellow)"
                                 stroke="white"
                                 strokeWidth={3}
                             />

@@ -25,7 +25,7 @@ import {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#ff7300']
 
 // 프로젝트 메인컬러 (총 자산 그래프 등)
-const MAIN_COLOR = '#F7A8B7'
+const MAIN_COLOR = 'var(--theme-primary)'
 
 // 계좌별 추이 차트용 파스텔 색상
 const ACCOUNT_CHART_COLORS = [

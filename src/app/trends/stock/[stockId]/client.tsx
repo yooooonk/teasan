@@ -22,10 +22,10 @@ import {
   YAxis,
 } from 'recharts'
 
-const MAIN_COLOR = '#F7A8B7'
-const MAIN_COLOR_LIGHT = '#fbc4cd'
-const GRADIENT_TOP = '#e88a9a'
-const GRADIENT_BOTTOM = '#fde0e6'
+const MAIN_COLOR = 'var(--theme-primary)'
+const MAIN_COLOR_LIGHT = 'var(--theme-accent-coral)'
+const GRADIENT_TOP = 'var(--theme-primary-deep)'
+const GRADIENT_BOTTOM = 'var(--nav-bar-bg)'
 
 type Props = {
   stockId: string
