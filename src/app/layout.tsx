@@ -1,13 +1,7 @@
 import NavWrapper from '@/components/ui/NavWrapper'
 import ContentArea from '@/components/ui/ContentArea'
 import type { Metadata } from 'next'
-import { Single_Day } from 'next/font/google'
 import './globals.css'
-
-const singleDay = Single_Day({
-  weight: '400',
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   title: '투자 대시보드',
@@ -35,7 +29,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className={singleDay.className}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
         <main className="min-h-screen pb-28 sm:pb-32">
           <ContentArea>{children}</ContentArea>
         </main>

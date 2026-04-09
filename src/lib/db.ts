@@ -8,6 +8,7 @@ import type { Stock, CreateStockRequest } from '@/types/stock'
 import type { Snapshot, SnapshotItem, SnapshotQuery } from '@/types/snapshot'
 import type { TargetStore } from '@/types/target'
 import type { AssetGroup } from '@/types/stock'
+import type { CreateHistoryRequest, HistoryEntry } from '@/types/history'
 
 export { sql }
 
@@ -275,4 +276,65 @@ export async function setTargets(store: TargetStore): Promise<void> {
       ON CONFLICT (asset_group) DO UPDATE SET target_amount = ${amount}
     `
   }
+}
+
+// --- History(매매일지) CRUD ---
+function rowToHistoryEntry(row: {
+  id: string
+  title: string
+  content: string
+  created_at: Date
+  updated_at: Date
+}): HistoryEntry {
+  return {
+    id: row.id,
+    title: row.title,
+    content: row.content,
+    createdAt: row.created_at.toISOString(),
+    updatedAt: row.updated_at.toISOString(),
+  }
+}
+
+export async function getHistoryEntries(): Promise<HistoryEntry[]> {
+  const { rows } = await sql`
+    SELECT id, title, content, created_at, updated_at
+    FROM history_entries
+    ORDER BY created_at DESC
+  `
+  return (rows as Parameters<typeof rowToHistoryEntry>[0][]).map(rowToHistoryEntry)
+}
+
+export async function createHistoryEntry(
+  data: CreateHistoryRequest
+): Promise<HistoryEntry> {
+  const id = `history_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  const now = new Date()
+  const nowStr = now.toISOString()
+  const { rows } = await sql`
+    INSERT INTO history_entries (id, title, content, created_at, updated_at)
+    VALUES (${id}, ${data.title}, ${data.content}, ${nowStr}, ${nowStr})
+    RETURNING id, title, content, created_at, updated_at
+  `
+  return rowToHistoryEntry(rows[0] as Parameters<typeof rowToHistoryEntry>[0])
+}
+
+export async function updateHistoryEntry(
+  id: string,
+  data: { title?: string; content?: string }
+): Promise<HistoryEntry | null> {
+  const { rows } = await sql`
+    UPDATE history_entries SET
+      title = COALESCE(${data.title ?? null}, title),
+      content = COALESCE(${data.content ?? null}, content),
+      updated_at = NOW()
+    WHERE id = ${id}
+    RETURNING id, title, content, created_at, updated_at
+  `
+  if (rows.length === 0) return null
+  return rowToHistoryEntry(rows[0] as Parameters<typeof rowToHistoryEntry>[0])
+}
+
+export async function deleteHistoryEntry(id: string): Promise<boolean> {
+  const { rowCount } = await sql`DELETE FROM history_entries WHERE id = ${id}`
+  return (rowCount ?? 0) > 0
 }
