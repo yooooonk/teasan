@@ -14,6 +14,14 @@ export const metadata: Metadata = {
   description: '자산별, 계좌별, 종목별 비중 및 자산 변화 추이 시각화',
   manifest: '/manifest.json',
   themeColor: '#E8A4BC',
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
   appleWebApp: {
     capable: true,
     title: '투자대시보드',
