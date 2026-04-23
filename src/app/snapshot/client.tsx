@@ -4,6 +4,7 @@ import SnapshotDateInput from '@/components/snapshot/SnapshotDateInput'
 import SnapshotSaveButton from '@/components/snapshot/SnapshotSaveButton'
 import SnapshotStockList from '@/components/snapshot/SnapshotStockList'
 import Spinner from '@/components/ui/Spinner'
+import { calculateSnapshotItem } from '@/lib/calculations'
 import { CreateSnapshotRequest, SnapshotItemForm } from '@/types/snapshot'
 import type { Snapshot } from '@/types/snapshot'
 import { Stock } from '@/types/stock'
@@ -14,6 +15,7 @@ export default function SnapshotClient() {
     const [stocks, setStocks] = useState<Stock[]>([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const [fetchingPrices, setFetchingPrices] = useState(false)
     const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'))
     const [items, setItems] = useState<SnapshotItemForm[]>([])
 
@@ -65,6 +67,55 @@ export default function SnapshotClient() {
         const newItems = [...items]
         newItems[index] = updatedItem
         setItems(newItems)
+    }
+
+    // 현재가 자동 조회
+    const handleFetchPrices = async () => {
+        setFetchingPrices(true)
+        try {
+            const codes = stocks.map((s) => s.stockCode)
+            const res = await fetch('/api/prices', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codes }),
+            })
+            const data = await res.json()
+            if (!data.ok) throw new Error(data.error)
+
+            setItems((prev) =>
+                prev.map((item) => {
+                    const priceData = data.data[item.stockCode]
+                    if (!priceData || priceData.price === null) return item
+
+                    const updated = { ...item, currentPrice: priceData.price }
+
+                    if (item.assetGroup === '해외주식' && priceData.exchangeRate) {
+                        updated.exchangeRate = priceData.exchangeRate
+                    }
+
+                    if (item.assetGroup === '금') {
+                        if (updated.currentPrice && updated.quantity && updated.purchaseAmount) {
+                            updated.valuationAmount = updated.currentPrice * updated.quantity
+                            updated.gainLoss = updated.valuationAmount - updated.purchaseAmount
+                        }
+                    } else if (updated.currentPrice && updated.averagePrice && updated.quantity) {
+                        const calc = calculateSnapshotItem(
+                            updated.currentPrice,
+                            updated.averagePrice,
+                            updated.quantity,
+                            updated.exchangeRate || 1
+                        )
+                        Object.assign(updated, calc)
+                    }
+
+                    return updated
+                })
+            )
+        } catch {
+            alert('시세 조회 중 오류가 발생했습니다.')
+        } finally {
+            setFetchingPrices(false)
+        }
     }
 
     // 저장
@@ -166,6 +217,25 @@ export default function SnapshotClient() {
             </h1>
 
             <SnapshotDateInput date={date} onChange={setDate} />
+
+            <div className="flex justify-end mb-3">
+                <button
+                    type="button"
+                    onClick={handleFetchPrices}
+                    disabled={fetchingPrices || stocks.length === 0}
+                    className="px-5 py-2 text-sm rounded-xl font-medium transition-colors inline-flex items-center gap-2 disabled:opacity-50 disabled:pointer-events-none bg-white border border-[var(--theme-primary)] text-[var(--theme-primary)] hover:bg-[var(--theme-primary)] hover:text-white"
+                >
+                    {fetchingPrices ? (
+                        <>
+                            <span className="inline-block w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            조회 중…
+                        </>
+                    ) : (
+                        '현재가 자동입력'
+                    )}
+                </button>
+            </div>
+
             <SnapshotStockList items={items} onItemChange={handleItemChange} />
             <SnapshotSaveButton onClick={handleSave} saving={saving} />
         </div>
